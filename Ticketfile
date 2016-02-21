@@ -1,0 +1,10 @@
+INIT
+
+WRITE Hello world!
+
+LF
+
+# multiple line feeds
+LF 3
+
+CUT

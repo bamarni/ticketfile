@@ -16,11 +16,15 @@ It takes as input a so-called "Ticketfile", and converts it to bytes to be sent 
     # Black is the default color, some models support an additional color (usually red)
     COLOR ( "BLACK" | "RED" )
 
-    # Default code table is https://en.wikipedia.org/wiki/Code_page_437
-    PRINT ascii_char { ascii_char }
+    # Default is "PC437"
+    CHARSET ( "PC437" | "Katakana" | "PC850" | "PC860" | ... )
+
+    PRINT unicode_char { unicode_char }
 
     # Line feed(s)
     LF { decimal_digit }
 
     # Cut paper
     CUT [ "PARTIAL" | "FULL" ]
+
+A Ticketfile is UTF-8 encoded.

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/bamarni/printer/command"
 	"strconv"
+	"golang.org/x/text/encoding/charmap"
 )
 
 func ToBytes(cmd command.Command) ([]byte, error) {
@@ -38,7 +39,8 @@ func ToBytes(cmd command.Command) ([]byte, error) {
 			rawCmd = "\x1Br0"
 		}
 	case "PRINT":
-		rawCmd = cmd.Arg
+		enc := charmap.CodePage437.NewEncoder()
+		return enc.Bytes([]byte(cmd.Arg))
 	case "LF":
 		if cmd.Arg != "" {
 			nb, _ := strconv.Atoi(cmd.Arg)

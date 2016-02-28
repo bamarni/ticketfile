@@ -3,23 +3,31 @@ package main
 import (
 	"bufio"
 	"github.com/bamarni/printer/escpos"
-	"github.com/bamarni/printer/parser"
+	"github.com/bamarni/printer/command"
 	"log"
 	"os"
 )
 
 func main() {
 	w := bufio.NewWriter(os.Stdout)
+	driver := escpos.NewEscpos()
+	cmds := make(chan command.Command)
 
-	for _, cmd := range parser.Parse(os.Stdin) {
+	go command.Parse(os.Stdin, cmds)
+
+	for cmd := range cmds {
 		log.Printf("Received command : [%s]\n", cmd.Raw)
 
-		rawBytes, err := escpos.ToBytes(cmd)
+		rawBytes, err := driver.FromCommand(cmd)
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalf("Driver error : %s\n", err)
 		}
 
 		w.Write(rawBytes)
+
+		if cmd.Name == command.Cut {
+			w.Flush()
+		}
 	}
 
 	w.Flush()

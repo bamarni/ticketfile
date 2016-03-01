@@ -5,12 +5,12 @@ install:
   - git clone https://github.com/sstephenson/bats.git /tmp/bats
   - mkdir -p /tmp/local
   - bash /tmp/bats/install.sh /tmp/local
-  - (cd tests/integration && go build printer.go)
-  - export PATH=/tmp/local/bin:$PWD/tests/integration:$PATH
+  - (cd tests/functional && go build printer.go)
+  - export PATH=/tmp/local/bin:$PWD/tests/functional:$PATH
 
 script:
   - bats --version
-  - bats tests/integration
+  - bats tests/functional
 
 notifications:
   email: false

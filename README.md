@@ -1,8 +1,28 @@
 # printer [![Build Status](https://travis-ci.org/bamarni/printer.svg?branch=master)](https://travis-ci.org/bamarni/printer)
 
-CLI program for ESC/POS printers.
+Library to control receipt printers supporting ESC/POS commands.
 
 It takes as input a so-called "Ticketfile", and converts it to bytes to be sent to the device.
+
+## Usage
+
+The most simple way to use it is to create a CLI program :
+
+```go
+package main
+
+import (
+	"github.com/bamarni/printer"
+	"os"
+)
+
+func main() {
+	printer := printer.NewPrinter(os.Stdin, os.Stdout)
+	printer.Print()
+}
+```
+
+You can then run : `program < /path/to/ticketfile > /path/to/device`
 
 ## Ticketfile reference
 

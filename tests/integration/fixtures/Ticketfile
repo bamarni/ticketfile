@@ -1,0 +1,16 @@
+INIT
+
+ALIGN RIGHT
+FONT C
+
+PRINT qwertz asdfgh
+
+CUT
+
+COLOR RED
+CHARSET PC850
+
+PRINT Être ou ne pas être
+LF 5
+
+CUT

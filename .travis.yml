@@ -1,20 +1,14 @@
 language: go
 
 install:
-  - echo $GOPATH
-  - pwd
-  - ls -al
   - go get golang.org/x/text/encoding
   - git clone https://github.com/sstephenson/bats.git /tmp/bats
   - mkdir -p /tmp/local
   - bash /tmp/bats/install.sh /tmp/local
   - (cd tests/integration && go build printer.go)
-  - export PATH=$PWD/tests/integration:$PATH
+  - export PATH=/tmp/local/bin:$PWD/tests/integration:$PATH
 
 script:
-  - pwd
-  - ls -al
-  - echo $PATH
   - bats --version
   - bats tests/integration
 

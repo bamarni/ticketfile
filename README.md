@@ -1,4 +1,4 @@
-# printer
+# printer [![Build Status](https://travis-ci.org/bamarni/printer.svg?branch=master)](https://travis-ci.org/bamarni/printer)
 
 CLI program for ESC/POS printers.
 

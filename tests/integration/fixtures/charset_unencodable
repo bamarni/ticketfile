@@ -1,0 +1,4 @@
+CHARSET PC437
+
+# PC437 doesn't support Ê
+PRINT Être ou ne pas être

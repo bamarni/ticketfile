@@ -29,7 +29,7 @@ var (
 	tokenWhitespace = regexp.MustCompile(`[\t\v\f\r ]+`)
 )
 
-func Parse(r io.Reader, cmds chan Command) {
+func Scan(r io.Reader, cmds chan Command) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := strings.TrimLeftFunc(scanner.Text(), unicode.IsSpace)

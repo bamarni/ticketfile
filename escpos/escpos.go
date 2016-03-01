@@ -35,7 +35,7 @@ func init() {
 	}
 }
 
-func (e *Escpos) FromCommand(cmd command.Command) ([]byte, error) {
+func (e *Escpos) ToBytes(cmd command.Command) ([]byte, error) {
 	if f, ok := dispatchTable[cmd.Name]; ok {
 		rawCmd, error := f(e, cmd)
 

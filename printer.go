@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"github.com/bamarni/printer/escpos"
 	"github.com/bamarni/printer/command"
-	"log"
 	"io"
+	"fmt"
 )
 
 type Printer struct {
@@ -24,34 +24,28 @@ func NewPrinter(r io.Reader, w io.Writer) *Printer {
 	return &printer
 }
 
-func (p *Printer) Print() {
+func (p *Printer) Print() error {
 	cmds := make(chan command.Command)
 
 	go command.Scan(p.input, cmds)
 
 	for cmd := range cmds {
-		log.Printf("Received command : [%s]\n", cmd.Raw)
-
 		rawBytes, err := p.driver.ToBytes(cmd)
 		if err != nil {
-			log.Fatalf("Driver error : %s\n", err)
+			return fmt.Errorf("Driver error : %s\n", err)
 		}
 
 		_, err = p.device.Write(rawBytes)
 		if err != nil {
-			log.Fatalf("Write error : %s\n", err)
+			return fmt.Errorf("Write error : %s\n", err)
 		}
 
 		if cmd.Name == command.Cut {
-			err := p.device.Flush()
-			if err != nil {
-				log.Fatalf("Flush error : %s\n", err)
+			if err := p.device.Flush(); err != nil {
+				return fmt.Errorf("Flush error : %s\n", err)
 			}
 		}
 	}
 
-	err := p.device.Flush()
-	if err != nil {
-		log.Fatalf("Flush error : %s\n", err)
-	}
+	return p.device.Flush()
 }

@@ -17,8 +17,8 @@ import (
 )
 
 func main() {
-	printer := printer.NewPrinter(os.Stdin, os.Stdout)
-	printer.Print()
+	printer := printer.NewPrinter(os.Stdout)
+	printer.Print(os.Stdin)
 }
 ```
 

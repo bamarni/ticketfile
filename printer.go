@@ -9,14 +9,12 @@ import (
 )
 
 type Printer struct {
-	input io.Reader
 	driver *escpos.Escpos
 	device *bufio.Writer
 }
 
-func NewPrinter(r io.Reader, w io.Writer) *Printer {
+func NewPrinter(w io.Writer) *Printer {
 	printer := Printer{
-		input: r,
 		driver: escpos.NewEscpos(),
 		device: bufio.NewWriter(w),
 	}
@@ -24,10 +22,10 @@ func NewPrinter(r io.Reader, w io.Writer) *Printer {
 	return &printer
 }
 
-func (p *Printer) Print() error {
+func (p *Printer) Print(r io.Reader) error {
 	cmds := make(chan command.Command)
 
-	go command.Scan(p.input, cmds)
+	go command.Scan(r, cmds)
 
 	for cmd := range cmds {
 		rawBytes, err := p.driver.ToBytes(cmd)

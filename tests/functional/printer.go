@@ -7,8 +7,8 @@ import (
 )
 
 func main() {
-	printer := printer.NewPrinter(os.Stdin, os.Stdout)
-	err := printer.Print()
+	printer := printer.NewPrinter(os.Stdout)
+	err := printer.Print(os.Stdin)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -44,7 +44,7 @@ You can then run : `program < /path/to/ticketfile > /path/to/device`
     # Line feed(s)
     LF { decimal_digit }
 
-    # Cut paper
+    # Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut.
     CUT [ "PARTIAL" | "FULL" ]
 
 A Ticketfile is UTF-8 encoded.

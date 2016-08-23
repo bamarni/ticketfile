@@ -57,7 +57,13 @@ func handleAlign(e *Escpos, cmd command.Command) (string, error) {
 }
 
 func handleCut(e *Escpos, cmd command.Command) (string, error) {
-	return "\x1DVA0", nil
+	switch cmd.Arg {
+	case "FULL":
+		return "\x1DVA0", nil
+	case "PARTIAL", "":
+		return "\x1DVA1", nil
+	}
+	return "", fmt.Errorf("Unsupported cut %s", cmd.Arg)
 }
 
 func handleFont(e *Escpos, cmd command.Command) (string, error) {

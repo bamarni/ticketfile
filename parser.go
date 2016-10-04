@@ -1,4 +1,4 @@
-package command
+package ticketfile
 
 import (
 	"bufio"
@@ -19,17 +19,11 @@ const (
 	Print   = "PRINT"
 )
 
-type Command struct {
-	Raw  string
-	Name string
-	Arg  string
-}
-
 var (
 	tokenWhitespace = regexp.MustCompile(`[\t\v\f\r ]+`)
 )
 
-func Scan(r io.Reader, cmds chan Command) {
+func (e *Engine) parse(r io.Reader) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := strings.TrimLeftFunc(scanner.Text(), unicode.IsSpace)
@@ -51,8 +45,8 @@ func Scan(r io.Reader, cmds chan Command) {
 			cmd.Arg = cmdSplits[1]
 		}
 
-		cmds <- cmd
+		e.cmds <- cmd
 	}
 
-	close(cmds)
+	close(e.cmds)
 }

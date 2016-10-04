@@ -1,15 +1,15 @@
 package main
 
 import (
-	"github.com/bamarni/printer"
-	"os"
+	"github.com/bamarni/ticketfile"
+	"github.com/bamarni/ticketfile/escpos"
 	"log"
+	"os"
 )
 
 func main() {
-	printer := printer.NewPrinter(os.Stdout)
-	err := printer.Print(os.Stdin)
-	if err != nil {
+	engine := ticketfile.NewEngine(os.Stdout, escpos.NewConverter())
+	if err := engine.Render(os.Stdin); err != nil {
 		log.Fatal(err)
 	}
 }

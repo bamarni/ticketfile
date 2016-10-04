@@ -1,6 +1,6 @@
 # ticketfile [![Build Status](https://travis-ci.org/bamarni/ticketfile.svg?branch=master)](https://travis-ci.org/bamarni/ticketfile)
 
-- [What is a TicketFile?](#what-is-a-ticketfile)
+- [What is a Ticketfile?](#what-is-a-ticketfile)
 - [Ticketfile specification](#ticketfile-specification)
 - [Golang library usage](#golang-library-usage)
 - [Contributing](#contributing)
@@ -9,9 +9,13 @@
 
 A Ticketfile is a textual representation of a thermal printer receipt.
 
-This allows you to write simple readable text for your receipts rather than having to deal with ESC/POS commands directly, which are binary specification.
+This allows you to write simple readable text for your receipts rather than having to deal for example
+with [ESC/POS](http://content.epson.de/fileadmin/content/files/RSD/downloads/escpos.pdf) commands directly,
+which are binary specification.
 
-It can also be converted into different representations. For instance, you could convert the same Ticketfile into ESC/POS commands to be sent to a retail shop's thermal printer, or convert it to an HTML view to be displayed in a browser.
+It can also be converted into different representations.
+For instance, you could convert the same Ticketfile into ESC/POS commands
+to be sent to a retail shop's thermal printer,or convert it to an HTML view to be displayed in a browser.
 
 ## Ticketfile specification
 

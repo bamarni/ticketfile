@@ -1,6 +1,7 @@
 # ticketfile [![Build Status](https://travis-ci.org/bamarni/ticketfile.svg?branch=master)](https://travis-ci.org/bamarni/ticketfile)
 
 - [What is a Ticketfile?](#what-is-a-ticketfile)
+- [Why should I use Ticketfiles?](#why-should-i-use-ticketfiles)
 - [Ticketfile specification](#ticketfile-specification)
 - [Golang library usage](#golang-library-usage)
 - [Contributing](#contributing)
@@ -9,13 +10,24 @@
 
 A Ticketfile is a textual representation of a thermal printer receipt.
 
-This allows you to write simple readable text for your receipts rather than having to deal for example
-with [ESC/POS](http://content.epson.de/fileadmin/content/files/RSD/downloads/escpos.pdf) commands directly,
-which are binary specification.
+It allows you to write simple readable text for your receipts rather than having to deal for example with
+[ESC/POS](http://content.epson.de/fileadmin/content/files/RSD/downloads/escpos.pdf)
+specification directly.
 
-It can also be converted into different representations.
-For instance, you could convert the same Ticketfile into ESC/POS commands
-to be sent to a retail shop's thermal printer,or convert it to an HTML view to be displayed in a browser.
+## Why should I use Ticketfiles?
+
+Maybe you've found an ESC/POS library for your favorite language out there
+and you're wondering why you should use Ticketfiles instead?
+
+Even though they're inspired by ESC/POS specification, Ticketfiles are readable 
+([here is a Ticketfile](tests/functional/fixtures/Ticketfile) and its [ESC/POS equivalent](tests/functional/fixtures/Ticketfile.expected)) and **manufacturer agnostic**.
+In the future if a new standard emerges we'll do our best to support it without changing the spec in a breaking way. 
+
+If you use a library you'll also be tied to a language, Ticketfiles are **language agnostic**. 
+We provide an official Golang library but you're free to write your own, the format is easily parsable.
+
+Finally, Ticketfiles are **context agnostic** and not limited to receipt printers.
+You could for instance convert a Ticketfile to HTML so it can be displayed in a browser or sent as e-mail attachment.
 
 ## Ticketfile specification
 
@@ -37,6 +49,8 @@ to be sent to a retail shop's thermal printer,or convert it to an HTML view to b
     # Line feed(s)
     LF { decimal_digit }
 
+    PRINTLF unicode_char { unicode_char }
+    
     # Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut.
     CUT [ "PARTIAL" | "FULL" ]
 
@@ -69,11 +83,7 @@ The following command would convert a Ticketfile into ESC/POS commands :
 
 ## Contributing
 
-This package is under development and not yet stable, the main features to come are :
-- specification for bar codes and images
-- an html converter
-
-Contributions and other ideas are also welcome.
+Contributions and new ideas are always welcome.
 
 The Golang library is a first-class citizen so any change in the specification needs to be reflected in the Go engine. 
 

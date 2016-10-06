@@ -30,6 +30,7 @@ func init() {
 		ticketfile.Init:    handleInit,
 		ticketfile.Lf:      handleLf,
 		ticketfile.Print:   handlePrint,
+		ticketfile.Printlf: handlePrintlf,
 	}
 }
 
@@ -39,7 +40,7 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 
 		return []byte(rawCmd), error
 	}
-	return nil, fmt.Errorf("Command %s is not supported", cmd.Name)
+	return nil, fmt.Errorf("command %s is not supported", cmd.Name)
 }
 
 func handleAlign(c *Converter, cmd ticketfile.Command) (string, error) {
@@ -51,7 +52,7 @@ func handleAlign(c *Converter, cmd ticketfile.Command) (string, error) {
 	case "RIGHT":
 		return "\x1Ba2", nil
 	}
-	return "", fmt.Errorf("Unsupported alignment %s", cmd.Arg)
+	return "", fmt.Errorf("unsupported alignment %s", cmd.Arg)
 }
 
 func handleCut(c *Converter, cmd ticketfile.Command) (string, error) {
@@ -61,7 +62,7 @@ func handleCut(c *Converter, cmd ticketfile.Command) (string, error) {
 	case "PARTIAL", "":
 		return "\x1DVA1", nil
 	}
-	return "", fmt.Errorf("Unsupported cut %s", cmd.Arg)
+	return "", fmt.Errorf("unsupported cut %s", cmd.Arg)
 }
 
 func handleFont(c *Converter, cmd ticketfile.Command) (string, error) {
@@ -73,7 +74,7 @@ func handleFont(c *Converter, cmd ticketfile.Command) (string, error) {
 	case "C":
 		return "\x1BM2", nil
 	}
-	return "", fmt.Errorf("Unsupported font %s", cmd.Arg)
+	return "", fmt.Errorf("unsupported font %s", cmd.Arg)
 }
 
 func handleColor(c *Converter, cmd ticketfile.Command) (string, error) {
@@ -93,7 +94,7 @@ func handleCharset(c *Converter, cmd ticketfile.Command) (string, error) {
 		c.enc = charmap.CodePage850.NewEncoder()
 		n = 2
 	default:
-		return "", fmt.Errorf("Charset %s not supported", cmd.Arg)
+		return "", fmt.Errorf("charset %s not supported", cmd.Arg)
 	}
 	return fmt.Sprintf("\x1Bt%c", n), nil
 }
@@ -114,9 +115,18 @@ func handleLf(c *Converter, cmd ticketfile.Command) (string, error) {
 }
 
 func handlePrint(c *Converter, cmd ticketfile.Command) (string, error) {
-	rawCmd, err := c.enc.String(cmd.Arg)
+	return c.encode(cmd.Arg)
+}
+
+func handlePrintlf(c *Converter, cmd ticketfile.Command) (string, error) {
+	s := cmd.Arg + "\n"
+	return c.encode(s)
+}
+
+func (c *Converter) encode(s string) (string, error) {
+	s, err := c.enc.String(s)
 	if err != nil {
-		return "", fmt.Errorf("Couldn't encode to charset (%s)", err)
+		return "", fmt.Errorf("couldn't encode to charset (%s)", err)
 	}
-	return rawCmd, nil
+	return s, nil
 }

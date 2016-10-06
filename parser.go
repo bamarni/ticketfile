@@ -17,6 +17,7 @@ const (
 	Init    = "INIT"
 	Lf      = "LF"
 	Print   = "PRINT"
+	Printlf = "PRINTLF"
 )
 
 var (

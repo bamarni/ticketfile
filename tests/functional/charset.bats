@@ -7,7 +7,7 @@
 @test "[Charset] fail for unsupported charsets" {
   run printer < $BATS_TEST_DIRNAME/fixtures/charset_unexisting
 
-  [[ "$output" == *"Charset TOUTI not supported"* ]] || false
+  [[ "$output" == *"charset TOUTI not supported"* ]] || false
 
   [ "$status" -ne 0 ]
 }
@@ -15,7 +15,7 @@
 @test "[Charset] fail for unencodable unicode" {
   run printer < $BATS_TEST_DIRNAME/fixtures/charset_unencodable
 
-  [[ "$output" == *"Couldn't encode to charset"* ]] || false
+  [[ "$output" == *"couldn't encode to charset"* ]] || false
 
   [ "$status" -ne 0 ]
 }

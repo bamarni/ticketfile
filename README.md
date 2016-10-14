@@ -67,6 +67,7 @@ package main
 
 import (
 	"github.com/bamarni/ticketfile"
+	"github.com/bamarni/ticketfile/escpos"
 	"os"
 )
 
@@ -80,6 +81,9 @@ func main() {
 The following command would convert a Ticketfile into ESC/POS commands :
 
     program < /path/to/ticketfile > /path/to/device
+
+*This is just a simple example, in case of a parsing error it would already have started to print the receipt before failing.
+To avoid this you could use a [buffered writer](https://golang.org/pkg/bufio/#Writer) and only flush when no error occured.*
 
 ## Contributing
 

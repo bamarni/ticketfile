@@ -10,7 +10,7 @@ CUT
 COLOR RED
 CHARSET PC850
 
-PRINT Être ou ne pas être
-LF 5
+PRINTLF Être ou ne pas être
+LF 4
 
 CUT FULL

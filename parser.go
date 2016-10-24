@@ -24,30 +24,36 @@ var (
 	tokenWhitespace = regexp.MustCompile(`[\t\v\f\r ]+`)
 )
 
-func (e *Engine) parse(r io.Reader) {
-	scanner := bufio.NewScanner(r)
-	for scanner.Scan() {
-		line := strings.TrimLeftFunc(scanner.Text(), unicode.IsSpace)
+func parse(r io.Reader) <-chan Command {
+	cmds := make(chan Command)
 
-		if line != "" && string(line[0]) == "#" {
-			line = ""
+	go func() {
+		scanner := bufio.NewScanner(r)
+		for scanner.Scan() {
+			line := strings.TrimLeftFunc(scanner.Text(), unicode.IsSpace)
+
+			if line != "" && string(line[0]) == "#" {
+				line = ""
+			}
+
+			if line == "" {
+				continue
+			}
+
+			cmdSplits := tokenWhitespace.Split(line, 2)
+			cmd := Command{
+				Raw:  line,
+				Name: cmdSplits[0],
+			}
+			if len(cmdSplits) == 2 {
+				cmd.Arg = cmdSplits[1]
+			}
+
+			cmds <- cmd
 		}
 
-		if line == "" {
-			continue
-		}
+		close(cmds)
+	}()
 
-		cmdSplits := tokenWhitespace.Split(line, 2)
-		cmd := Command{
-			Raw:  line,
-			Name: cmdSplits[0],
-		}
-		if len(cmdSplits) == 2 {
-			cmd.Arg = cmdSplits[1]
-		}
-
-		e.cmds <- cmd
-	}
-
-	close(e.cmds)
+	return cmds
 }

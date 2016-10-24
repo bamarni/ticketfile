@@ -3,6 +3,7 @@ package ticketfile
 import (
 	"fmt"
 	"io"
+	"sync"
 )
 
 type Command struct {
@@ -18,21 +19,23 @@ type Converter interface {
 type Engine struct {
 	conv Converter
 	w    io.Writer
-	cmds chan Command
+	mu   sync.Mutex
 }
 
 func NewEngine(w io.Writer, c Converter) *Engine {
 	return &Engine{
 		conv: c,
 		w:    w,
-		cmds: make(chan Command),
 	}
 }
 
 func (e *Engine) Render(r io.Reader) error {
-	go e.parse(r)
+	e.mu.Lock()
+	defer e.mu.Unlock()
 
-	for cmd := range e.cmds {
+	cmds := parse(r)
+
+	for cmd := range cmds {
 		rawBytes, err := e.conv.Convert(cmd)
 		if err != nil {
 			return fmt.Errorf("encoding error : %s\n", err)

@@ -1,6 +1,7 @@
 package ticketfile
 
 import (
+	"bufio"
 	"fmt"
 	"io"
 	"sync"
@@ -25,7 +26,7 @@ type Engine struct {
 func NewEngine(w io.Writer, c Converter) *Engine {
 	return &Engine{
 		conv: c,
-		w:    w,
+		w:    bufio.NewWriter(w),
 	}
 }
 
@@ -47,5 +48,5 @@ func (e *Engine) Render(r io.Reader) error {
 		}
 	}
 
-	return nil
+	return e.w.Flush()
 }

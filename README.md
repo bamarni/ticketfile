@@ -82,6 +82,8 @@ The following command would convert a Ticketfile into ESC/POS commands and send 
 
     program < /path/to/ticketfile > /path/to/device
 
+*In case of a syntax error in your ticketfile, a message would be displayed to stderr while nothing would be sent to the printer device.*
+
 ## Contributing
 
 Contributions and new ideas are always welcome.

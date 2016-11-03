@@ -19,7 +19,7 @@ type Converter interface {
 
 type Engine struct {
 	conv Converter
-	w    io.Writer
+	w    *bufio.Writer
 	mu   sync.Mutex
 }
 

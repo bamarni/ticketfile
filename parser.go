@@ -23,7 +23,7 @@ const (
 
 var (
 	tokenWhitespace   = regexp.MustCompile(`[\t\v\f\r ]+`)
-	tokenMultilineEnd = "```"
+	tokenMultilineEnd = ">>>"
 )
 
 type context struct {

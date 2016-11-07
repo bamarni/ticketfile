@@ -59,7 +59,7 @@ The following specification use the [Extended Backus-Naur Form](https://en.wikip
     (* Prints a multiline raw block *)
     "PRINTRAW"
     { unicode_char | "\n" }
-    "```"
+    ">>>"
 
     (* Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut. *)
     "CUT" [ "PARTIAL" | "FULL" ]

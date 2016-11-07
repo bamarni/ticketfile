@@ -64,9 +64,7 @@ The following specification use the [Extended Backus-Naur Form](https://en.wikip
     (* Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut. *)
     "CUT" [ "PARTIAL" | "FULL" ]
 
-A Ticketfile is UTF-8 encoded.
-
-For reference : ([Ticketfile example](tests/functional/fixtures/Ticketfile) 
+A Ticketfile is UTF-8 encoded. For reference, here is a [Ticketfile example](tests/functional/fixtures/Ticketfile).
 
 ## Golang library usage
 

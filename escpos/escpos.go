@@ -22,15 +22,16 @@ var dispatchTable map[string]func(*Converter, ticketfile.Command) (string, error
 
 func init() {
 	dispatchTable = map[string]func(*Converter, ticketfile.Command) (string, error){
-		ticketfile.Align:   handleAlign,
-		ticketfile.Charset: handleCharset,
-		ticketfile.Color:   handleColor,
-		ticketfile.Cut:     handleCut,
-		ticketfile.Font:    handleFont,
-		ticketfile.Init:    handleInit,
-		ticketfile.Lf:      handleLf,
-		ticketfile.Print:   handlePrint,
-		ticketfile.Printlf: handlePrintlf,
+		ticketfile.Align:    handleAlign,
+		ticketfile.Charset:  handleCharset,
+		ticketfile.Color:    handleColor,
+		ticketfile.Cut:      handleCut,
+		ticketfile.Font:     handleFont,
+		ticketfile.Init:     handleInit,
+		ticketfile.Lf:       handleLf,
+		ticketfile.Print:    handlePrint,
+		ticketfile.Printlf:  handlePrintlf,
+		ticketfile.Printraw: handlePrintraw,
 	}
 }
 
@@ -121,6 +122,10 @@ func handlePrint(c *Converter, cmd ticketfile.Command) (string, error) {
 func handlePrintlf(c *Converter, cmd ticketfile.Command) (string, error) {
 	s := cmd.Arg + "\n"
 	return c.encode(s)
+}
+
+func handlePrintraw(c *Converter, cmd ticketfile.Command) (string, error) {
+	return c.encode(cmd.Arg)
 }
 
 func (c *Converter) encode(s string) (string, error) {

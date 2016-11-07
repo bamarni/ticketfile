@@ -3,6 +3,13 @@ INIT
 ALIGN RIGHT
 FONT C
 
+PRINTRAW
+Multiline
+Text
+
+# WITH COMMENT AND blank line
+```
+
 PRINT qwertz asdfgh
 
 CUT

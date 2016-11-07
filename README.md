@@ -31,30 +31,42 @@ You could for instance convert a Ticketfile to HTML so it can be displayed in a 
 
 ## Ticketfile specification
 
-    # Clears the print buffer / resets modes to their default values
-    INIT
+The following specification use the [Extended Backus-Naur Form](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form).
 
-    ALIGN ( "LEFT" | "CENTER" | "RIGHT" )
+    (* Below is a ticketfile comment *)
+    "#"{ unicode_char }
 
-    FONT ( "A" | "B" | "C" )
+    (* Clears the print buffer / resets modes to their default values *)
+    "INIT"
 
-    # Black is the default color, some models support an additional color (usually red)
-    COLOR ( "BLACK" | "RED" )
+    "ALIGN" ( "LEFT" | "CENTER" | "RIGHT" )
 
-    # Default is "PC437"
-    CHARSET ( "PC437" | "Katakana" | "PC850" | "PC860" | ... )
+    "FONT" ( "A" | "B" | "C" )
 
-    PRINT unicode_char { unicode_char }
+    (* Black is the default color, some models support an additional color (usually red) *)
+    "COLOR" ( "BLACK" | "RED" )
 
-    # Line feed(s)
-    LF { decimal_digit }
+    (* Default is "PC437" *)
+    "CHARSET" ( "PC437" | "Katakana" | "PC850" | "PC860" | ... )
 
-    PRINTLF unicode_char { unicode_char }
-    
-    # Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut.
-    CUT [ "PARTIAL" | "FULL" ]
+    "PRINT" unicode_char { unicode_char }
+
+    (* Line feed(s) *)
+    "LF" { decimal_digit }
+
+    "PRINTLF" unicode_char { unicode_char }
+
+    (* Prints a multiline raw block *)
+    "PRINTRAW"
+    { unicode_char | "\n" }
+    "```"
+
+    (* Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut. *)
+    "CUT" [ "PARTIAL" | "FULL" ]
 
 A Ticketfile is UTF-8 encoded.
+
+For reference : ([Ticketfile example](tests/functional/fixtures/Ticketfile) 
 
 ## Golang library usage
 

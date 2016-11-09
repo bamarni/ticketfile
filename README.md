@@ -23,7 +23,7 @@ Even though they're inspired by ESC/POS specification, Ticketfiles are readable
 ([here is a Ticketfile](tests/functional/fixtures/Ticketfile) and its [ESC/POS equivalent](tests/functional/fixtures/Ticketfile.expected)) and **manufacturer agnostic**.
 In the future if a new standard emerges we'll do our best to support it without changing the spec in a breaking way. 
 
-If you use a library you'll also be tied to a language, Ticketfiles are **language agnostic**. 
+If you use a library you'll also be tied to a language, Ticketfiles are **language agnostic**, it's just text. 
 We provide an official Golang library but you're free to write your own, the format is easily parsable.
 
 Finally, Ticketfiles are **context agnostic** and not limited to receipt printers.
@@ -31,40 +31,116 @@ You could for instance convert a Ticketfile to HTML so it can be displayed in a 
 
 ## Ticketfile specification
 
-The following specification use the [Extended Backus-Naur Form](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form).
+A Ticketfile is Unicode text encoded in UTF-8, it contains a set of commands.
 
-    (* Below is a ticketfile comment *)
-    "#"{ unicode_char }
+Those commands allow you to write to the receipt, cut the paper, define styles, etc.
 
-    (* Clears the print buffer / resets modes to their default values *)
-    "INIT"
+### Notation
 
-    "ALIGN" ( "LEFT" | "CENTER" | "RIGHT" )
+The present specification use the Extended Backus-Naur Form.
+More precisely, the exact syntax follows the [Golang specification notation](https://golang.org/ref/spec#Notation).
 
-    "FONT" ( "A" | "B" | "C" )
+### Comments
 
-    (* Black is the default color, some models support an additional color (usually red) *)
-    "COLOR" ( "BLACK" | "RED" )
+Ticketfile comments are single-line :
 
-    (* Default is "PC437" *)
-    "CHARSET" ( "PC437" | "Katakana" | "PC850" | "PC860" | ... )
+``` ebnf
+comment = "#" { unicode_char } .
+```
 
-    "PRINT" unicode_char { unicode_char }
+### INIT
 
-    (* Line feed(s) *)
-    "LF" { decimal_digit }
+The INIT command clears the print buffer and resets modes to their default values.
 
-    "PRINTLF" unicode_char { unicode_char }
+It basically sets the printer in the same state as it would be right after powering it up.
 
-    (* Prints a multiline raw block *)
-    "PRINTRAW"
-    { unicode_char | "\n" }
-    ">>>"
+It should typically be at the beginning of a Ticketfile, so that states and styles from
+previous Ticketfiles are discarded.
 
-    (* Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut. *)
-    "CUT" [ "PARTIAL" | "FULL" ]
+``` ebnf
+init_command = "INIT" .
+```
 
-A Ticketfile is UTF-8 encoded. For reference, here is a [Ticketfile example](tests/functional/fixtures/Ticketfile).
+### PRINT, LF, PRINTLF and PRINTRAW
+
+Those commands print text and control line feeds.
+
+``` ebnf
+print_command    = "PRINT" unicode_char { unicode_char } .
+lf_command       = "LF" { decimal_digit } .
+printlf_command  = "PRINTLF" unicode_char { unicode_char } .
+printraw_command = "PRINTRAW" newline { unicode_char | "\n" } newline ">>>" .
+```
+
+For example :
+
+    # First row
+    PRINT Hello
+    LF 2
+
+    # Third row
+    PRINTLF world
+
+    PRINTRAW
+    This text can contain newlines.
+    This is useful if for instance you're using templating on top of Ticketfiles
+    and have multi-line variables to display.
+    >>>
+
+### ALIGN
+
+Set alignement for the text.
+
+``` ebnf
+align_command = "ALIGN" ( "LEFT" | "CENTER" | "RIGHT" ) .
+```
+
+Example :
+
+    ALIGN RIGHT
+    PRINTLF To the right!
+
+    ALIGN CENTER
+    PRINTLF This is centered.
+
+
+### FONT
+
+Sets font style.
+
+``` ebnf
+font_command = "FONT" ( "A" | "B" | "C" ) .
+```
+
+A is the default one, B is usually smaller text.
+
+### COLOR
+
+Sets text color. Black is the default color, some models support an additional color (usually red).
+
+``` ebnf
+color_command = "COLOR" ( "BLACK" | "RED" ) .
+```
+
+### CHARSET
+
+Sets the charset. The default is PC437 (USA: Standard Europe), PC850 is for Western Europe.
+
+``` ebnf
+charset_command = "CHARSET" ( "PC437" | "PC850" ) .
+```
+
+### CUT
+
+Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut.
+
+``` ebnf
+cut_command = "CUT" [ "PARTIAL" | "FULL" ] .
+```
+
+### Example
+
+For reference, here is a [Ticketfile example](tests/functional/fixtures/Ticketfile).
 
 ## Golang library usage
 

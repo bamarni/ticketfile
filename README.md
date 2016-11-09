@@ -35,6 +35,37 @@ A Ticketfile is Unicode text encoded in UTF-8, it contains a set of commands.
 
 Those commands allow you to write to the receipt, cut the paper, define styles, etc.
 
+Before going into the specification, here is a first impression of how a Ticketfile looks like :
+
+    INIT
+    
+    ALIGN CENTER
+    PRINTRAW
+    My Shop
+    Fifth Avenue
+    New York, NY 10020
+    >>>
+    
+    ALIGN LEFT
+    FONT B
+    PRINTLF Invoice n. 456
+    PRINTLF John Smith
+    FONT A
+    
+    ALIGN RIGHT
+    PRINTRAW
+    8.00
+    15.90
+    ===
+    23.90
+    >>>
+    
+    ALIGN CENTER
+    PRINTLF Thank you for your visit!
+    CUT
+    
+    
+
 ### Notation
 
 The present specification use the Extended Backus-Naur Form.
@@ -137,10 +168,6 @@ Cuts paper, default mode is PARTIAL which lefts one point uncut, some models sup
 ``` ebnf
 cut_command = "CUT" [ "PARTIAL" | "FULL" ] .
 ```
-
-### Example
-
-For reference, here is a [Ticketfile example](tests/functional/fixtures/Ticketfile).
 
 ## Golang library usage
 

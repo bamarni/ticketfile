@@ -1,11 +1,13 @@
 package escpos
 
 import (
+	"errors"
 	"fmt"
 	"github.com/bamarni/ticketfile"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
 	"strconv"
+	"strings"
 )
 
 type Converter struct {
@@ -29,6 +31,7 @@ func init() {
 		ticketfile.Font:     handleFont,
 		ticketfile.Init:     handleInit,
 		ticketfile.Lf:       handleLf,
+		ticketfile.Margin:   handleMargin,
 		ticketfile.Print:    handlePrint,
 		ticketfile.Printlf:  handlePrintlf,
 		ticketfile.Printraw: handlePrintraw,
@@ -76,6 +79,19 @@ func handleFont(c *Converter, cmd ticketfile.Command) (string, error) {
 		return "\x1BM2", nil
 	}
 	return "", fmt.Errorf("unsupported font %s", cmd.Arg)
+}
+
+func handleMargin(c *Converter, cmd ticketfile.Command) (string, error) {
+	// TODO: should be parser's responsibility
+	margin := strings.Fields(cmd.Arg)
+
+	if margin[0] == "LEFT" {
+		return "\x1Bl" + margin[1], nil
+	} else if margin[0] == "RIGHT" {
+		return "\x1BQ" + margin[1], nil
+	}
+
+	return "", errors.New("unsupported margin")
 }
 
 func handleColor(c *Converter, cmd ticketfile.Command) (string, error) {

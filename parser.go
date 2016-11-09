@@ -16,6 +16,7 @@ const (
 	Font     = "FONT"
 	Init     = "INIT"
 	Lf       = "LF"
+	Margin   = "MARGIN"
 	Print    = "PRINT"
 	Printlf  = "PRINTLF"
 	Printraw = "PRINTRAW"

@@ -98,7 +98,7 @@ Those commands print text and control line feeds.
 
 ``` ebnf
 print_command    = "PRINT" unicode_char { unicode_char } .
-lf_command       = "LF" { decimal_digit } .
+lf_command       = "LF" { decimal_lit } .
 printlf_command  = "PRINTLF" unicode_char { unicode_char } .
 printraw_command = "PRINTRAW" newline { unicode_char | "\n" } newline ">>>" .
 ```
@@ -134,6 +134,14 @@ Example :
     ALIGN CENTER
     PRINTLF This is centered.
 
+
+### MARGIN
+
+Sets margin.
+
+``` ebnf
+margin_command = "MARGIN" ( "LEFT" | "RIGHT" ) decimal_lit .
+```
 
 ### FONT
 

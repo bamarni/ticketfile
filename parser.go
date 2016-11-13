@@ -9,17 +9,17 @@ import (
 )
 
 const (
-	Align    = "ALIGN"
-	Charset  = "CHARSET"
-	Color    = "COLOR"
-	Cut      = "CUT"
-	Font     = "FONT"
-	Init     = "INIT"
-	Lf       = "LF"
-	Margin   = "MARGIN"
-	Print    = "PRINT"
-	Printlf  = "PRINTLF"
-	Printraw = "PRINTRAW"
+	Align      = "ALIGN"
+	Charset    = "CHARSET"
+	Color      = "COLOR"
+	Cut        = "CUT"
+	Font       = "FONT"
+	Init       = "INIT"
+	Lf         = "LF"
+	Marginleft = "MARGINLEFT"
+	Print      = "PRINT"
+	Printlf    = "PRINTLF"
+	Printraw   = "PRINTRAW"
 )
 
 var (

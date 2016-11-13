@@ -7,7 +7,6 @@ import (
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
 	"strconv"
-	"strings"
 )
 
 type Converter struct {
@@ -24,17 +23,17 @@ var dispatchTable map[string]func(*Converter, ticketfile.Command) (string, error
 
 func init() {
 	dispatchTable = map[string]func(*Converter, ticketfile.Command) (string, error){
-		ticketfile.Align:    handleAlign,
-		ticketfile.Charset:  handleCharset,
-		ticketfile.Color:    handleColor,
-		ticketfile.Cut:      handleCut,
-		ticketfile.Font:     handleFont,
-		ticketfile.Init:     handleInit,
-		ticketfile.Lf:       handleLf,
-		ticketfile.Margin:   handleMargin,
-		ticketfile.Print:    handlePrint,
-		ticketfile.Printlf:  handlePrintlf,
-		ticketfile.Printraw: handlePrintraw,
+		ticketfile.Align:      handleAlign,
+		ticketfile.Charset:    handleCharset,
+		ticketfile.Color:      handleColor,
+		ticketfile.Cut:        handleCut,
+		ticketfile.Font:       handleFont,
+		ticketfile.Init:       handleInit,
+		ticketfile.Lf:         handleLf,
+		ticketfile.Marginleft: handleMarginleft,
+		ticketfile.Print:      handlePrint,
+		ticketfile.Printlf:    handlePrintlf,
+		ticketfile.Printraw:   handlePrintraw,
 	}
 }
 
@@ -81,19 +80,32 @@ func handleFont(c *Converter, cmd ticketfile.Command) (string, error) {
 	return "", fmt.Errorf("unsupported font %s", cmd.Arg)
 }
 
-func handleMargin(c *Converter, cmd ticketfile.Command) (string, error) {
-	// TODO: should be parser's responsibility
-	margin := strings.Fields(cmd.Arg)
-
-	if margin[0] == "LEFT" {
-		return "\x1Bl" + margin[1], nil
-	} else if margin[0] == "RIGHT" {
-		return "\x1BQ" + margin[1], nil
+// [Name]	Set left margin
+// [Format]
+// 	ASCII		GS		L		nL		nH
+//	Hex		1D		4C		nL		nH
+//	Decimal		29		76		nL		nH
+// [Range]	(nL + nH × 256) = 0 – 65535
+// [Default]	(nL + nH × 256) = 0
+func handleMarginleft(c *Converter, cmd ticketfile.Command) (string, error) {
+	margin, err := strconv.Atoi(cmd.Arg)
+	if err != nil {
+		return "", err
+	}
+	if margin > 65535 {
+		return "", errors.New("invalid left margin")
 	}
 
-	return "", errors.New("unsupported margin")
+	return fmt.Sprintf("\x1DL%c%c", margin%256, margin/256), nil
 }
 
+// [Name]	Select print color
+// [Format]
+// 	ASCII	 	ESC	  	r	  	n
+// 	Hex		1B		72		n
+// 	Decimal		27		114		n
+// [Range]	n = 0, 1, 48, 49
+// [Default]	n = 0
 func handleColor(c *Converter, cmd ticketfile.Command) (string, error) {
 	if cmd.Arg == "RED" {
 		return "\x1Br1", nil
@@ -101,6 +113,15 @@ func handleColor(c *Converter, cmd ticketfile.Command) (string, error) {
 	return "\x1Br0", nil
 }
 
+// [Name]	Select character code table
+// [Format]
+// 	ASCII	   	ESC	  	t	  	n
+// 	Hex		1B		74		n
+// 	Decimal		27		116		n
+// [Range]	different depending on the printers
+// [Default]
+// 	n = 20	   	[Thai models]
+// 	n = 0	   	[Other models]
 func handleCharset(c *Converter, cmd ticketfile.Command) (string, error) {
 	var n byte
 	switch cmd.Arg {

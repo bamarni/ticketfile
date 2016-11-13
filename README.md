@@ -2,6 +2,7 @@
 
 - [What is a Ticketfile?](#what-is-a-ticketfile)
 - [Why should I use Ticketfiles?](#why-should-i-use-ticketfiles)
+- [Status of the spec](#status-of-the-spec)
 - [Ticketfile specification](#ticketfile-specification)
 - [Golang library usage](#golang-library-usage)
 - [Contributing](#contributing)
@@ -26,8 +27,13 @@ In the future if a new standard emerges we'll do our best to support it without 
 If you use a library you'll also be tied to a language, Ticketfiles are **language agnostic**, it's just text. 
 We provide an official Golang library but you're free to write your own, the format is easily parsable.
 
-Finally, Ticketfiles are **context agnostic** and not limited to receipt printers.
-You could for instance convert a Ticketfile to HTML so it can be displayed in a browser or sent as e-mail attachment.
+Finally, even though they mainly target receipt printers, Ticketfiles are **context agnostic**.
+For instance, in the future our Golang library will provide an HTML converter so that a Ticketfile could be displayed in a browser or sent as e-mail attachment.
+
+## Status of the spec
+
+At the moment specification are still subject to change based on usage feedbacks.
+They'll get more stable after a few months.
 
 ## Ticketfile specification
 
@@ -135,13 +141,20 @@ Example :
     PRINTLF This is centered.
 
 
-### MARGIN
+### MARGINLEFT (likely to change)
 
-Sets margin.
+Sets left margin.
 
 ``` ebnf
-margin_command = "MARGIN" ( "LEFT" | "RIGHT" ) decimal_lit .
+two_bytes_decimal_lit = "0" … "65535" .
+margin_command   = "MARGINLEFT" two_bytes_decimal_lit .
 ```
+
+The margin is a number from 0 to 65535. For example, this command would set the left margin to `1024 * (horizontal motion unit)` :
+
+    MARGINLEFT 1024
+
+*This command will most likely change in the future, as it's currently not abstracted from ESC/POS.*
 
 ### FONT
 
@@ -187,9 +200,10 @@ The most simple way to use it is to create a CLI program :
 package main
 
 import (
+	"os"
+
 	"github.com/bamarni/ticketfile"
 	"github.com/bamarni/ticketfile/escpos"
-	"os"
 )
 
 func main() {

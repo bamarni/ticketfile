@@ -1,24 +1,26 @@
 INIT
-
-ALIGN RIGHT
-FONT C
-MARGIN LEFT 3
-
+    
+ALIGN CENTER
 PRINTRAW
-Multiline
-Text
-
-# WITH COMMENT AND blank line
+My Shop
+Fifth Avenue
+New York, NY 10020
 >>>
-
-PRINT qwertz asdfgh
-
+    
+ALIGN LEFT
+FONT B
+PRINTLF Invoice n. 456
+PRINTLF John Smith
+FONT A
+    
+ALIGN RIGHT
+PRINTRAW
+8.00
+15.90
+===
+23.90
+>>>
+    
+ALIGN CENTER
+PRINTLF Thank you for your visit!
 CUT
-
-COLOR RED
-CHARSET PC850
-
-PRINTLF Être ou ne pas être
-LF 4
-
-CUT FULL

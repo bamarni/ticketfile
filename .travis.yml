@@ -1,7 +1,7 @@
 language: go
 
 install:
-  - go get golang.org/x/text/encoding
+  - go get -t ./...
   - git clone https://github.com/sstephenson/bats.git /tmp/bats
   - mkdir -p /tmp/local
   - bash /tmp/bats/install.sh /tmp/local
@@ -9,6 +9,7 @@ install:
   - export PATH=/tmp/local/bin:$PWD/tests/functional:$PATH
 
 script:
+  - go test -v ./...
   - bats --version
   - bats tests/functional
 

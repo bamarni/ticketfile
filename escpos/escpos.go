@@ -7,6 +7,7 @@ import (
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
 	"strconv"
+	"strings"
 )
 
 type Converter struct {
@@ -34,6 +35,7 @@ func init() {
 		ticketfile.Print:      handlePrint,
 		ticketfile.Printlf:    handlePrintlf,
 		ticketfile.Printraw:   handlePrintraw,
+		ticketfile.Units:      handleUnits,
 	}
 }
 
@@ -97,6 +99,35 @@ func handleMarginleft(c *Converter, cmd ticketfile.Command) (string, error) {
 	}
 
 	return fmt.Sprintf("\x1DL%c%c", margin%256, margin/256), nil
+}
+
+// [Name]	Set horizontal and vertical motion units
+// [Format]
+// 	ASCII	   	GS	  	P	  	x	  	y
+// 	Hex		1D		50		x		y
+// 	Decimal		29		80		x		y
+// [Range]
+// 	x = 0 – 255
+// 	y = 0 – 255
+// [Default]	x, y: different depending on the printers
+func handleUnits(c *Converter, cmd ticketfile.Command) (string, error) {
+	units := strings.Fields(cmd.Arg)
+	x, err := strconv.Atoi(units[0])
+	if err != nil {
+		return "", err
+	}
+	if x > 255 {
+		return "", errors.New("invalid horizontal unit")
+	}
+	y, err := strconv.Atoi(units[1])
+	if err != nil {
+		return "", err
+	}
+	if y > 255 {
+		return "", errors.New("invalid vertical unit")
+	}
+
+	return fmt.Sprintf("\x1DP%c%c", x, y), nil
 }
 
 // [Name]	Select print color

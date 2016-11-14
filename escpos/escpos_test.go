@@ -21,6 +21,9 @@ var expectedEscpos = []struct {
 	{ticketfile.Command{Name: "PRINTLF", Arg: "test"}, "test\n"},
 	{ticketfile.Command{Name: "PRINTRAW", Arg: "test\ntest2\n"}, "test\ntest2\n"},
 
+	// UNITS
+	{ticketfile.Command{Name: "UNITS", Arg: "5 10"}, fmt.Sprintf("\x1DP%c%c", 5, 10)},
+
 	// MARGINLEFT
 	{ticketfile.Command{Name: "MARGINLEFT", Arg: "500"}, fmt.Sprintf("\x1DL%c%c", 244, 1)},
 	{ticketfile.Command{Name: "MARGINLEFT", Arg: "1024"}, fmt.Sprintf("\x1DL%c%c", 0, 4)},

@@ -20,6 +20,7 @@ const (
 	Print      = "PRINT"
 	Printlf    = "PRINTLF"
 	Printraw   = "PRINTRAW"
+	Units      = "UNITS"
 )
 
 var (

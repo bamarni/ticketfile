@@ -140,6 +140,25 @@ Example :
     ALIGN CENTER
     PRINTLF This is centered.
 
+### UNITS (likely to change)
+
+Sets the vertical and horizontal motion units.
+
+``` ebnf
+byte_decimal_lit = "0" … "255" .
+units_command   = "UNITS" byte_decimal_lit byte_decimal_lit .
+```
+
+The first argument corresponds to the horizontal motion unit, the second to the vertical motion unit. Those units are used for print position related commands, such as `MARGINLEFT`.
+
+The resulting motion in inches is the multiplicative inverse of the provided value. For example :
+
+    UNITS 2 0
+
+Here the horizontal motion unit would be `1 / 2 inches` (approximately 12.7 mm).
+The zero value for the vertical motion unit indicates that it should use the printer's default.
+
+*This command will most likely change in the future, as it's currently not abstracted from ESC/POS.*
 
 ### MARGINLEFT (likely to change)
 
@@ -150,9 +169,15 @@ two_bytes_decimal_lit = "0" … "65535" .
 margin_command   = "MARGINLEFT" two_bytes_decimal_lit .
 ```
 
-The margin is a number from 0 to 65535. For example, this command would set the left margin to `1024 * (horizontal motion unit)` :
+The argument is a number from 0 to 65535, the actual resulting margin is :
+`margin * horizontal_motion_unit`.
 
-    MARGINLEFT 1024
+Example :
+
+    UNITS 2 0
+    MARGINLEFT 3
+
+Here the horizontal motion unit is 2, hence the margin would be `3 * 1 / 2` inches (approximately 38.1 mm).
 
 *This command will most likely change in the future, as it's currently not abstracted from ESC/POS.*
 

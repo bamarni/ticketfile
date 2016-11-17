@@ -21,6 +21,7 @@ const (
 	Printlf    = "PRINTLF"
 	Printraw   = "PRINTRAW"
 	Units      = "UNITS"
+	Barcode    = "BARCODE"
 )
 
 var (
@@ -35,54 +36,48 @@ type context struct {
 	multiline bool
 }
 
-func parse(r io.Reader) <-chan Command {
-	cmds := make(chan Command)
+func parse(r io.Reader) (cmds []Command) {
+	ctx := &context{}
+	scanner := bufio.NewScanner(r)
+	for scanner.Scan() {
+		line := scanner.Text()
 
-	go func() {
-		ctx := &context{}
-		scanner := bufio.NewScanner(r)
-		for scanner.Scan() {
-			line := scanner.Text()
-
-			if ctx.multiline {
-				if line != tokenMultilineEnd {
-					ctx.raw = ctx.raw + line + "\n"
-					ctx.arg = ctx.arg + line + "\n"
-					continue
-				}
-				ctx.raw = ctx.raw + tokenMultilineEnd + "\n"
-			} else {
-				line = trimLine(line)
-				if line == "" {
-					continue
-				}
-				cmdSplits := tokenWhitespace.Split(line, 2)
-				ctx.raw = line
-
-				// TODO : this should throw a parse error
-				// in case the command doesn't exist
-				ctx.cmd = cmdSplits[0]
-
-				// TODO : handle in a more generic way
-				if ctx.cmd == "PRINTRAW" {
-					ctx.multiline = true
-					continue
-				}
-				if len(cmdSplits) == 2 {
-					ctx.arg = cmdSplits[1]
-				}
+		if ctx.multiline {
+			if line != tokenMultilineEnd {
+				ctx.raw = ctx.raw + line + "\n"
+				ctx.arg = ctx.arg + line + "\n"
+				continue
 			}
-
-			cmds <- Command{
-				Raw:  ctx.raw,
-				Name: ctx.cmd,
-				Arg:  ctx.arg,
+			ctx.raw = ctx.raw + tokenMultilineEnd + "\n"
+		} else {
+			line = trimLine(line)
+			if line == "" {
+				continue
 			}
-			ctx = &context{}
+			cmdSplits := tokenWhitespace.Split(line, 2)
+			ctx.raw = line
+
+			// TODO : this should throw a parse error
+			// in case the command doesn't exist
+			ctx.cmd = cmdSplits[0]
+
+			// TODO : handle in a more generic way
+			if ctx.cmd == "PRINTRAW" {
+				ctx.multiline = true
+				continue
+			}
+			if len(cmdSplits) == 2 {
+				ctx.arg = cmdSplits[1]
+			}
 		}
 
-		close(cmds)
-	}()
+		cmds = append(cmds, Command{
+			Raw:  ctx.raw,
+			Name: ctx.cmd,
+			Arg:  ctx.arg,
+		})
+		ctx = &context{}
+	}
 
 	return cmds
 }

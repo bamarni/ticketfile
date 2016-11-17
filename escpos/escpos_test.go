@@ -46,6 +46,9 @@ var expectedEscpos = []struct {
 	// COLOR
 	{ticketfile.Command{Name: "COLOR", Arg: "BLACK"}, "\x1Br0"},
 	{ticketfile.Command{Name: "COLOR", Arg: "RED"}, "\x1Br1"},
+
+	// BARCODE
+	{ticketfile.Command{Name: "BARCODE", Arg: "PRINT CODE39 AZERTY123"}, fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
 }
 
 func TestConvert(t *testing.T) {
@@ -56,7 +59,7 @@ func TestConvert(t *testing.T) {
 			t.Error("unexpected error")
 		}
 		if string(escpos) != exp.escpos {
-			t.Error("unexpected ESC/POS command %s", escpos)
+			t.Error("unexpected ESC/POS command %s, expected %s", escpos, []byte(exp.escpos))
 		}
 	}
 }

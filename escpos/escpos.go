@@ -36,6 +36,7 @@ func init() {
 		ticketfile.Printlf:    handlePrintlf,
 		ticketfile.Printraw:   handlePrintraw,
 		ticketfile.Units:      handleUnits,
+		ticketfile.Barcode:    handleBarcode,
 	}
 }
 
@@ -166,6 +167,40 @@ func handleCharset(c *Converter, cmd ticketfile.Command) (string, error) {
 		return "", fmt.Errorf("charset %s not supported", cmd.Arg)
 	}
 	return fmt.Sprintf("\x1Bt%c", n), nil
+}
+
+func handleBarcode(c *Converter, cmd ticketfile.Command) (string, error) {
+	args := strings.Fields(cmd.Arg)
+	subCmd := args[0]
+	if subCmd == "PRINT" {
+		return barcodePrint(args[1], args[2])
+	}
+
+	return "", fmt.Errorf("%s barcode subcommand not supported", cmd.Arg)
+}
+
+// [Name] 	Print barcode
+// [Format]
+// 	(A)	ASCII	    	GS	   	k	   	m	   	d1 ... dk	   	NUL
+//		Hex		1D		6B		m		d1 ... dk		NUL
+//		Decimal		29		107		m		d1 ... dk		NUL
+//
+//	(B)	ASCII	    	GS	   	k	   	m	   	n	   	d1 ... dn
+//		Hex		1D		6B		m		n		d1 ... dn
+//		Decimal		29		107		m		n		d1 ... dn
+// [Range] 	m: different depending on the printers d, k of (A), and d, n of (B): different depending on the barcode format. Refer to the tables in the ESC/POS specification.
+// [Default]	None
+func barcodePrint(format, value string) (string, error) {
+	// TODO : validate value according to the format
+	var m int
+	if format == "CODE39" {
+		m = 4
+	} else {
+		return "", fmt.Errorf("%s barcode format not supported", format)
+	}
+
+	// function (A)
+	return fmt.Sprintf("\x1Dk%c%s\x00", m, value), nil
 }
 
 func handleInit(c *Converter, cmd ticketfile.Command) (string, error) {

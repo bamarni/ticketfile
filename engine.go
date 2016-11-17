@@ -36,7 +36,7 @@ func (e *Engine) Render(r io.Reader) error {
 
 	cmds := parse(r)
 
-	for cmd := range cmds {
+	for _, cmd := range cmds {
 		rawBytes, err := e.conv.Convert(cmd)
 		if err != nil {
 			return fmt.Errorf("encoding error : %s\n", err)

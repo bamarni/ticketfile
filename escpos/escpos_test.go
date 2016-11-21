@@ -49,6 +49,11 @@ var expectedEscpos = []struct {
 
 	// BARCODE
 	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "PRINT CODE39 AZERTY123"}, fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
+	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "WIDTH 50"}, fmt.Sprintf("\x1Dw%c", 50)},
+	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "HEIGHT 10"}, fmt.Sprintf("\x1Dh%c", 10)},
+	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "HRI FONT A"}, fmt.Sprintf("\x1Df%c", 0)},
+	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "HRI FONT B"}, fmt.Sprintf("\x1Df%c", 1)},
+	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "HRI DISPLAY TOP"}, fmt.Sprintf("\x1DH%c", 1)},
 }
 
 func TestConvert(t *testing.T) {

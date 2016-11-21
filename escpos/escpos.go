@@ -276,8 +276,7 @@ func barcodeHriDisplay(value string) (string, error) {
 // [Range]		n: different depending on the printers
 // [Default]	n = 0
 func barcodeHriFont(value string) (string, error) {
-	fonts := map[string]int{"A": 0, "B": 1, "C": 2, "D": 3, "E": 4}
-	return fmt.Sprintf("\x1Df%c", fonts[value]), nil
+	return fmt.Sprintf("\x1Df%c", value[0]-65), nil
 }
 
 func handleInit(c *Converter, cmd ticketfile.Command) (string, error) {

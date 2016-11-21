@@ -169,11 +169,24 @@ func handleCharset(c *Converter, cmd ticketfile.Command) (string, error) {
 func handleBarcode(c *Converter, cmd ticketfile.Command) (string, error) {
 	args := strings.Fields(cmd.Arg)
 	subCmd := args[0]
-	if subCmd == "PRINT" {
+	switch subCmd {
+	case "PRINT":
 		return barcodePrint(args[1], args[2])
+	case "WIDTH":
+		return barcodeWidth(args[1])
+	case "HEIGHT":
+		return barcodeHeight(args[1])
+	case "HRI":
+		if args[1] == "FONT" {
+			return barcodeHriFont(args[2])
+		} else if args[1] == "DISPLAY" {
+			return barcodeHriDisplay(args[2])
+		} else {
+			return "", fmt.Errorf("%s barcode hri subcommand not supported", args[1])
+		}
 	}
 
-	return "", fmt.Errorf("%s barcode subcommand not supported", cmd.Arg)
+	return "", fmt.Errorf("%s barcode subcommand not supported", subCmd)
 }
 
 // [Name] 	Print barcode
@@ -198,6 +211,73 @@ func barcodePrint(format, value string) (string, error) {
 
 	// function (A)
 	return fmt.Sprintf("\x1Dk%c%s\x00", m, value), nil
+}
+
+// [Name]		Set barcode width
+// [Format]
+//   ASCII		   	GS	  	w	  	n
+//   Hex			1D		77		n
+//   Decimal		29		119		n
+// [Range]		n: different depending on the printers
+// [Default]	n: different depending on the printers
+func barcodeWidth(value string) (string, error) {
+	width, err := strconv.Atoi(value)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("\x1Dw%c", width), nil
+}
+
+// [Name]	Set barcode height
+// [Format]
+//   ASCII		   	GS	  	h	  	n
+//   Hex			1D		68		n
+//   Decimal		29		104		n
+// [Range]		n = 1 – 255
+// [Default]	n: different depending on the printers
+func barcodeHeight(value string) (string, error) {
+	height, err := strconv.Atoi(value)
+	if err != nil {
+		return "", err
+	}
+	if height < 1 || height > 255 {
+		return "", errors.New("invalid height")
+	}
+	return fmt.Sprintf("\x1Dh%c", height), nil
+}
+
+// [Name]		Select print position of HRI characters
+// [Format]
+//   ASCII	   	GS	  	H	  	n
+//   Hex		1D		48		n
+//   Decimal	29		72		n
+// [Range]		n = 0 – 3
+// 				n = 48 – 51
+// [Default]	n = 0
+func barcodeHriDisplay(value string) (string, error) {
+	var display int
+	switch value {
+	case "TOP":
+		display = 1
+	case "BOTTOM":
+		display = 2
+	case "BOTH":
+		display = 3
+	}
+
+	return fmt.Sprintf("\x1DH%c", display), nil
+}
+
+// [Name]	Select font for HRI characters
+// [Format]
+//   ASCII		   	GS	  	f	  	n
+//   Hex			1D		66		n
+//   Decimal		29		102		n
+// [Range]		n: different depending on the printers
+// [Default]	n = 0
+func barcodeHriFont(value string) (string, error) {
+	fonts := map[string]int{"A": 0, "B": 1, "C": 2, "D": 3, "E": 4}
+	return fmt.Sprintf("\x1Df%c", fonts[value]), nil
 }
 
 func handleInit(c *Converter, cmd ticketfile.Command) (string, error) {

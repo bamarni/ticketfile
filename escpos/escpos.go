@@ -3,11 +3,12 @@ package escpos
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/bamarni/ticketfile"
 	"golang.org/x/text/encoding"
 	"golang.org/x/text/encoding/charmap"
-	"strconv"
-	"strings"
 )
 
 type Converter struct {
@@ -20,33 +21,29 @@ func NewConverter() *Converter {
 	}
 }
 
-var dispatchTable map[string]func(*Converter, ticketfile.Command) (string, error)
-
-func init() {
-	dispatchTable = map[string]func(*Converter, ticketfile.Command) (string, error){
-		ticketfile.Align:      handleAlign,
-		ticketfile.Charset:    handleCharset,
-		ticketfile.Color:      handleColor,
-		ticketfile.Cut:        handleCut,
-		ticketfile.Font:       handleFont,
-		ticketfile.Init:       handleInit,
-		ticketfile.Lf:         handleLf,
-		ticketfile.Marginleft: handleMarginleft,
-		ticketfile.Print:      handlePrint,
-		ticketfile.Printlf:    handlePrintlf,
-		ticketfile.Printraw:   handlePrintraw,
-		ticketfile.Units:      handleUnits,
-		ticketfile.Barcode:    handleBarcode,
-	}
+var dispatchTable = map[ticketfile.CommandType]func(*Converter, ticketfile.Command) (string, error){
+	ticketfile.Align:      handleAlign,
+	ticketfile.Charset:    handleCharset,
+	ticketfile.Color:      handleColor,
+	ticketfile.Cut:        handleCut,
+	ticketfile.Font:       handleFont,
+	ticketfile.Init:       handleInit,
+	ticketfile.Lf:         handleLf,
+	ticketfile.Marginleft: handleMarginleft,
+	ticketfile.Print:      handlePrint,
+	ticketfile.Printlf:    handlePrintlf,
+	ticketfile.Printraw:   handlePrintraw,
+	ticketfile.Units:      handleUnits,
+	ticketfile.Barcode:    handleBarcode,
 }
 
 func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
-	if f, ok := dispatchTable[cmd.Name]; ok {
+	if f, ok := dispatchTable[cmd.Type]; ok {
 		rawCmd, error := f(c, cmd)
 
 		return []byte(rawCmd), error
 	}
-	return nil, fmt.Errorf("command %s is not supported", cmd.Name)
+	return nil, nil
 }
 
 func handleAlign(c *Converter, cmd ticketfile.Command) (string, error) {

@@ -2,26 +2,11 @@ package ticketfile
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"regexp"
 	"strings"
 	"unicode"
-)
-
-const (
-	Align      = "ALIGN"
-	Charset    = "CHARSET"
-	Color      = "COLOR"
-	Cut        = "CUT"
-	Font       = "FONT"
-	Init       = "INIT"
-	Lf         = "LF"
-	Marginleft = "MARGINLEFT"
-	Print      = "PRINT"
-	Printlf    = "PRINTLF"
-	Printraw   = "PRINTRAW"
-	Units      = "UNITS"
-	Barcode    = "BARCODE"
 )
 
 var (
@@ -29,66 +14,44 @@ var (
 	tokenMultilineEnd = ">>>"
 )
 
-type context struct {
-	raw       string
-	cmd       string
-	arg       string
-	multiline bool
-}
-
-func parse(r io.Reader) (cmds []Command) {
-	ctx := &context{}
+func parse(r io.Reader) ([]Command, error) {
+	var (
+		cmdName string
+		cmdType CommandType
+		cmdArg  string
+		cmds    []Command
+	)
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if ctx.multiline {
+		if cmdType.isMultiline() {
 			if line != tokenMultilineEnd {
-				ctx.raw = ctx.raw + line + "\n"
-				ctx.arg = ctx.arg + line + "\n"
+				cmdArg = cmdArg + line + "\n"
 				continue
 			}
-			ctx.raw = ctx.raw + tokenMultilineEnd + "\n"
 		} else {
-			line = trimLine(line)
-			if line == "" {
+			line = strings.TrimLeftFunc(line, unicode.IsSpace)
+			if line == "" || string(line[0]) == "#" {
 				continue
 			}
 			cmdSplits := tokenWhitespace.Split(line, 2)
-			ctx.raw = line
-
-			// TODO : this should throw a parse error
-			// in case the command doesn't exist
-			ctx.cmd = cmdSplits[0]
-
-			// TODO : handle in a more generic way
-			if ctx.cmd == "PRINTRAW" {
-				ctx.multiline = true
+			cmdName = cmdSplits[0]
+			cmdType = commands[cmdName]
+			if cmdType == undefined {
+				return nil, fmt.Errorf("undefined command %s", cmdName)
+			}
+			if cmdType.isMultiline() {
 				continue
 			}
 			if len(cmdSplits) == 2 {
-				ctx.arg = cmdSplits[1]
+				cmdArg = cmdSplits[1]
 			}
 		}
-
-		cmds = append(cmds, Command{
-			Raw:  ctx.raw,
-			Name: ctx.cmd,
-			Arg:  ctx.arg,
-		})
-		ctx = &context{}
+		cmds = append(cmds, Command{Type: cmdType, Arg: cmdArg})
+		cmdName = ""
+		cmdType = undefined
+		cmdArg = ""
 	}
-
-	return cmds
-}
-
-func trimLine(line string) string {
-	line = strings.TrimLeftFunc(line, unicode.IsSpace)
-
-	// comment line
-	if line != "" && string(line[0]) == "#" {
-		return ""
-	}
-
-	return line
+	return cmds, nil
 }

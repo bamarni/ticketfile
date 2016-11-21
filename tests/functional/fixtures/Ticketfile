@@ -6,13 +6,13 @@ My Shop
 Fifth Avenue
 New York, NY 10020
 >>>
-    
+
 ALIGN LEFT
 FONT B
 PRINTLF Invoice n. 456
 PRINTLF John Smith
 FONT A
-    
+
 ALIGN RIGHT
 PRINTRAW
 8.00
@@ -20,7 +20,7 @@ PRINTRAW
 ===
 23.90
 >>>
-    
+
 ALIGN CENTER
 PRINTLF Thank you for your visit!
 CUT

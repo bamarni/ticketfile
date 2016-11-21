@@ -12,43 +12,43 @@ var expectedEscpos = []struct {
 	escpos  string
 }{
 	// INIT
-	{ticketfile.Command{Name: "INIT"}, "\x1B@"},
+	{ticketfile.Command{Type: ticketfile.Init}, "\x1B@"},
 
 	// PRINT, LF, PRINTLF, PRINTRAW
-	{ticketfile.Command{Name: "PRINT", Arg: "test"}, "test"},
-	{ticketfile.Command{Name: "LF"}, "\n"},
-	{ticketfile.Command{Name: "LF", Arg: "12"}, fmt.Sprintf("\x1Bd%c", 12)},
-	{ticketfile.Command{Name: "PRINTLF", Arg: "test"}, "test\n"},
-	{ticketfile.Command{Name: "PRINTRAW", Arg: "test\ntest2\n"}, "test\ntest2\n"},
+	{ticketfile.Command{Type: ticketfile.Print, Arg: "test"}, "test"},
+	{ticketfile.Command{Type: ticketfile.Lf}, "\n"},
+	{ticketfile.Command{Type: ticketfile.Lf, Arg: "12"}, fmt.Sprintf("\x1Bd%c", 12)},
+	{ticketfile.Command{Type: ticketfile.Printlf, Arg: "test"}, "test\n"},
+	{ticketfile.Command{Type: ticketfile.Printraw, Arg: "test\ntest2\n"}, "test\ntest2\n"},
 
 	// UNITS
-	{ticketfile.Command{Name: "UNITS", Arg: "5 10"}, fmt.Sprintf("\x1DP%c%c", 5, 10)},
+	{ticketfile.Command{Type: ticketfile.Units, Arg: "5 10"}, fmt.Sprintf("\x1DP%c%c", 5, 10)},
 
 	// MARGINLEFT
-	{ticketfile.Command{Name: "MARGINLEFT", Arg: "500"}, fmt.Sprintf("\x1DL%c%c", 244, 1)},
-	{ticketfile.Command{Name: "MARGINLEFT", Arg: "1024"}, fmt.Sprintf("\x1DL%c%c", 0, 4)},
+	{ticketfile.Command{Type: ticketfile.Marginleft, Arg: "500"}, fmt.Sprintf("\x1DL%c%c", 244, 1)},
+	{ticketfile.Command{Type: ticketfile.Marginleft, Arg: "1024"}, fmt.Sprintf("\x1DL%c%c", 0, 4)},
 
 	// ALIGN
-	{ticketfile.Command{Name: "ALIGN", Arg: "LEFT"}, "\x1Ba0"},
-	{ticketfile.Command{Name: "ALIGN", Arg: "CENTER"}, "\x1Ba1"},
-	{ticketfile.Command{Name: "ALIGN", Arg: "RIGHT"}, "\x1Ba2"},
+	{ticketfile.Command{Type: ticketfile.Align, Arg: "LEFT"}, "\x1Ba0"},
+	{ticketfile.Command{Type: ticketfile.Align, Arg: "CENTER"}, "\x1Ba1"},
+	{ticketfile.Command{Type: ticketfile.Align, Arg: "RIGHT"}, "\x1Ba2"},
 
 	// CUT
-	{ticketfile.Command{Name: "CUT"}, "\x1DVA1"},
-	{ticketfile.Command{Name: "CUT", Arg: "PARTIAL"}, "\x1DVA1"},
-	{ticketfile.Command{Name: "CUT", Arg: "FULL"}, "\x1DVA0"},
+	{ticketfile.Command{Type: ticketfile.Cut}, "\x1DVA1"},
+	{ticketfile.Command{Type: ticketfile.Cut, Arg: "PARTIAL"}, "\x1DVA1"},
+	{ticketfile.Command{Type: ticketfile.Cut, Arg: "FULL"}, "\x1DVA0"},
 
 	// FONT
-	{ticketfile.Command{Name: "FONT", Arg: "A"}, "\x1BM0"},
-	{ticketfile.Command{Name: "FONT", Arg: "B"}, "\x1BM1"},
-	{ticketfile.Command{Name: "FONT", Arg: "C"}, "\x1BM2"},
+	{ticketfile.Command{Type: ticketfile.Font, Arg: "A"}, "\x1BM0"},
+	{ticketfile.Command{Type: ticketfile.Font, Arg: "B"}, "\x1BM1"},
+	{ticketfile.Command{Type: ticketfile.Font, Arg: "C"}, "\x1BM2"},
 
 	// COLOR
-	{ticketfile.Command{Name: "COLOR", Arg: "BLACK"}, "\x1Br0"},
-	{ticketfile.Command{Name: "COLOR", Arg: "RED"}, "\x1Br1"},
+	{ticketfile.Command{Type: ticketfile.Color, Arg: "BLACK"}, "\x1Br0"},
+	{ticketfile.Command{Type: ticketfile.Color, Arg: "RED"}, "\x1Br1"},
 
 	// BARCODE
-	{ticketfile.Command{Name: "BARCODE", Arg: "PRINT CODE39 AZERTY123"}, fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
+	{ticketfile.Command{Type: ticketfile.Barcode, Arg: "PRINT CODE39 AZERTY123"}, fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
 }
 
 func TestConvert(t *testing.T) {

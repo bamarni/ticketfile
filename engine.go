@@ -7,12 +7,6 @@ import (
 	"sync"
 )
 
-type Command struct {
-	Raw  string
-	Name string
-	Arg  string
-}
-
 type Converter interface {
 	Convert(cmd Command) ([]byte, error)
 }
@@ -34,17 +28,20 @@ func (e *Engine) Render(r io.Reader) error {
 	e.mu.Lock()
 	defer e.mu.Unlock()
 
-	cmds := parse(r)
+	cmds, err := parse(r)
+	if err != nil {
+		return fmt.Errorf("parsing error : %s", err)
+	}
 
 	for _, cmd := range cmds {
 		rawBytes, err := e.conv.Convert(cmd)
 		if err != nil {
-			return fmt.Errorf("encoding error : %s\n", err)
+			return fmt.Errorf("converter error : %s", err)
 		}
 
 		_, err = e.w.Write(rawBytes)
 		if err != nil {
-			return fmt.Errorf("write error : %s\n", err)
+			return fmt.Errorf("write error : %s", err)
 		}
 	}
 

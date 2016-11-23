@@ -5,6 +5,7 @@ install:
   - git clone https://github.com/sstephenson/bats.git /tmp/bats
   - mkdir -p /tmp/local
   - bash /tmp/bats/install.sh /tmp/local
+  - export PATH=/tmp/local/bin:$PATH
   - go install github.com/bamarni/ticketfile/cmd/ticket
 
 script:

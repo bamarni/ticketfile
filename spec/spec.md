@@ -4,37 +4,6 @@ A Ticketfile is Unicode text encoded in UTF-8, it contains a set of commands.
 
 Those commands allow you to write to the receipt, cut the paper, define styles, etc.
 
-Before going into the specification, here is a first impression of how a Ticketfile might look like :
-
-    INIT
-    
-    ALIGN CENTER
-    PRINTRAW
-    My Shop
-    Fifth Avenue
-    New York, NY 10020
-    >>>
-    
-    ALIGN LEFT
-    FONT B
-    PRINTLF Invoice n. 456
-    PRINTLF John Smith
-    FONT A
-    
-    ALIGN RIGHT
-    PRINTRAW
-    8.00
-    15.90
-    ===
-    23.90
-    >>>
-
-    LF
- 
-    ALIGN CENTER
-    PRINTLF Thank you for your visit!
-    CUT
-
 *At the moment specification are still subject to change based on usage feedbacks.
 They'll get more stable after a few months.*
 

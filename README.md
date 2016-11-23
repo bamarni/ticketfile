@@ -31,34 +31,50 @@ For instance, in the future our Golang library will provide an HTML converter so
 
 ## Ticketfile specification
 
+Before going into the specification, here is a first impression of how a Ticketfile might look like :
+
+    INIT
+    
+    ALIGN CENTER
+    PRINTRAW
+    My Shop
+    Fifth Avenue
+    New York, NY 10020
+    >>>
+    
+    ALIGN LEFT
+    FONT B
+    PRINTLF Invoice n. 456
+    PRINTLF John Smith
+    FONT A
+    
+    ALIGN RIGHT
+    PRINTRAW
+    8.00
+    15.90
+    ===
+    23.90
+    >>>
+
+    LF
+ 
+    ALIGN CENTER
+    PRINTLF Thank you for your visit!
+    CUT
+
 Full specification are available [here](spec/spec.md).
 
 ## Golang library usage
 
 The Golang library contains a parser and various converters.
 
-The most simple way to use it is to create a CLI program :
+The most simple way to use it is through the `ticket` command :
 
-```go
-package main
+    go get -u github.com/bamarni/ticketfile/cmd/ticket
 
-import (
-	"os"
+The following command would then convert a Ticketfile into ESC/POS commands and send them to a printer :
 
-	"github.com/bamarni/ticketfile"
-	"github.com/bamarni/ticketfile/escpos"
-)
-
-func main() {
-	engine := ticketfile.NewEngine(os.Stdout, escpos.NewConverter())
-	if err := engine.Render(os.Stdin); err != nil {
-		log.Fatal(err)
-	}
-}
-```
-The following command would convert a Ticketfile into ESC/POS commands and send them to a printer :
-
-    program < /path/to/ticketfile > /path/to/device
+    ticket < /path/to/ticketfile > /path/to/device
 
 *In case of a syntax error in your ticketfile, a message would be displayed to stderr while nothing would be sent to the printer device.*
 

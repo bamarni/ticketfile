@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/bamarni/ticketfile"
-	"github.com/bamarni/ticketfile/escpos"
 	"log"
 	"os"
+
+	"github.com/bamarni/ticketfile"
+	"github.com/bamarni/ticketfile/escpos"
 )
 
 func main() {

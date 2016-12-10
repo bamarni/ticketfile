@@ -1,26 +1,18 @@
 INIT
-    
+
+CHARSET PC850
+
 ALIGN CENTER
-PRINTRAW
-My Shop
-Fifth Avenue
-New York, NY 10020
->>>
+
+PRINT Être ou ne pas être
 
 ALIGN LEFT
-FONT B
-PRINTLF Invoice n. 456
-PRINTLF John Smith
-FONT A
 
-ALIGN RIGHT
+FONT B
+
 PRINTRAW
-8.00
-15.90
-===
-23.90
+This is
+multiline
 >>>
 
-ALIGN CENTER
-PRINTLF Thank you for your visit!
 CUT

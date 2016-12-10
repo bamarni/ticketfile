@@ -19,7 +19,7 @@ specification directly.
 Maybe you've found an ESC/POS library for your favorite language out there
 and you're wondering why you should use Ticketfiles instead?
 
-Even though they're inspired by ESC/POS specification, Ticketfiles are readable 
+Even though they're inspired by ESC/POS specification, Ticketfiles are human-readable 
 ([here is a Ticketfile](tests/functional/fixtures/Ticketfile) and its [ESC/POS equivalent](tests/functional/fixtures/Ticketfile.expected)) and **manufacturer agnostic**.
 In the future if a new standard emerges we'll do our best to support it without changing the spec in a breaking way. 
 
@@ -30,37 +30,6 @@ Finally, even though they mainly target receipt printers, Ticketfiles are **cont
 For instance, in the future our Golang library will provide an HTML converter so that a Ticketfile could be displayed in a browser or sent as e-mail attachment.
 
 ## Ticketfile specification
-
-Before going into the specification, here is a first impression of how a Ticketfile might look like :
-
-    INIT
-    
-    ALIGN CENTER
-    PRINTRAW
-    My Shop
-    Fifth Avenue
-    New York, NY 10020
-    >>>
-    
-    ALIGN LEFT
-    FONT B
-    PRINTLF Invoice n. 456
-    PRINTLF John Smith
-    FONT A
-    
-    ALIGN RIGHT
-    PRINTRAW
-    8.00
-    15.90
-    ===
-    23.90
-    >>>
-
-    LF
- 
-    ALIGN CENTER
-    PRINTLF Thank you for your visit!
-    CUT
 
 Full specification are available [here](spec/spec.md).
 

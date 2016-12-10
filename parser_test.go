@@ -24,7 +24,7 @@ multiline
 	expectedCommands = []Command{
 		{Type: Init},
 		{Type: Printlf, Arg: "print this"},
-		{Type: Align, Arg: "RIGHT"},
+		{Type: Align, Arg: "RIGHT", Opcode: []byte{2}},
 		{Type: Printraw, Arg: "This is\nmultiline\n"},
 	}
 )

@@ -48,7 +48,11 @@ func parse(r io.Reader) ([]Command, error) {
 				cmdArg = cmdSplits[1]
 			}
 		}
-		cmds = append(cmds, Command{Type: cmdType, Arg: cmdArg})
+		cmd, err := NewCommand(cmdType, cmdArg)
+		if err != nil {
+			return nil, err
+		}
+		cmds = append(cmds, cmd)
 		cmdName = ""
 		cmdType = undefined
 		cmdArg = ""

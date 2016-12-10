@@ -144,7 +144,7 @@ charset_command = "CHARSET" ( "PC437" | "PC850" ) .
 
 ### CUT
 
-Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut.
+Cuts paper, default mode is FULL, PARTIAL would left one point uncut.
 
 ``` ebnf
 cut_command = "CUT" [ "PARTIAL" | "FULL" ] .

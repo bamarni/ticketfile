@@ -112,8 +112,18 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			err = fmt.Errorf("unsupported color %s", arg)
 		}
 	case Charset:
-		if arg == "PC850" {
+		if arg == "PC437" {
+			opcode = []byte{escpos.CharsetPC437}
+		} else if arg == "PC850" {
 			opcode = []byte{escpos.CharsetPC850}
+		} else if arg == "PC860" {
+			opcode = []byte{escpos.CharsetPC860}
+		} else if arg == "PC863" {
+			opcode = []byte{escpos.CharsetPC863}
+		} else if arg == "PC865" {
+			opcode = []byte{escpos.CharsetPC865}
+		} else {
+			err = fmt.Errorf("charset %s not supported", arg)
 		}
 	case Lf:
 		if arg != "" {

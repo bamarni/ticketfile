@@ -71,6 +71,14 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 		} else {
 			err = fmt.Errorf("unsupported alignment %s", arg)
 		}
+	case Color:
+		if arg == "BLACK" {
+			opcode = []byte{escpos.ColorBlack}
+		} else if arg == "RED" {
+			opcode = []byte{escpos.ColorRed}
+		} else {
+			err = fmt.Errorf("unsupported color %s", arg)
+		}
 	case Cut:
 		if arg == "" || arg == "FULL" {
 			opcode = []byte{0}
@@ -80,7 +88,13 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			err = fmt.Errorf("unsupported cut %s", arg)
 		}
 	case Font:
-		if arg != "A" && arg != "B" && arg != "C" {
+		if arg == "A" {
+			opcode = []byte{escpos.FontA}
+		} else if arg == "B" {
+			opcode = []byte{escpos.FontB}
+		} else if arg == "C" {
+			opcode = []byte{escpos.FontC}
+		} else {
 			err = fmt.Errorf("unsupported font %s", arg)
 		}
 	case Marginleft:

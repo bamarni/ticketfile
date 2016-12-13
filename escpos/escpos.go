@@ -21,18 +21,15 @@ func NewConverter() *Converter {
 }
 
 var dispatchTable = map[ticketfile.CommandType]func(*Converter, ticketfile.Command) (string, error){
-	ticketfile.Color:      handleColor,
-	ticketfile.Font:       handleFont,
-	ticketfile.Marginleft: handleMarginleft,
-	ticketfile.Units:      handleUnits,
-	ticketfile.Barcode:    handleBarcode,
+	ticketfile.Barcode: handleBarcode,
 }
 
 func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
-
 	switch cmd.Type {
 	case ticketfile.Align:
 		return c.escpos.Align(cmd.Opcode[0]), nil
+	case ticketfile.Color:
+		return c.escpos.Color(cmd.Opcode[0]), nil
 	case ticketfile.Cut:
 		if cmd.Opcode[0] == 1 {
 			return c.escpos.Cut(true), nil
@@ -42,12 +39,18 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 		return c.escpos.Init(), nil
 	case ticketfile.Charset:
 		return c.escpos.Charset(cmd.Opcode[0]), nil
+	case ticketfile.MarginLeft:
+		return c.escpos.Marginleft(uint16(cmd.Opcode[0]) + uint16(cmd.Opcode[1])<<8), nil
 	case ticketfile.Print, ticketfile.Printraw:
 		return c.escpos.Print(cmd.Arg)
 	case ticketfile.Printlf:
 		return c.escpos.Print(cmd.Arg + "\n")
 	case ticketfile.Lf:
 		return c.escpos.Lf(cmd.Opcode[0]), nil
+	case ticketfile.Units:
+		return c.escpos.Units(cmd.Opcode[0], cmd.OpCode[1]), nil
+	case ticketfile.Font:
+		return c.escpos.Font(cmd.Opcode[0]), nil
 	}
 
 	if f, ok := dispatchTable[cmd.Type]; ok {
@@ -56,56 +59,6 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 		return []byte(rawCmd), error
 	}
 	return nil, nil
-}
-
-func handleFont(c *Converter, cmd ticketfile.Command) (string, error) {
-	switch cmd.Arg {
-	case "A":
-		return "\x1BM0", nil
-	case "B":
-		return "\x1BM1", nil
-	case "C":
-		return "\x1BM2", nil
-	}
-	return "", fmt.Errorf("unsupported font %s", cmd.Arg)
-}
-
-// [Name]	Set left margin
-// [Format]
-// 	ASCII		GS		L		nL		nH
-//	Hex		1D		4C		nL		nH
-//	Decimal		29		76		nL		nH
-// [Range]	(nL + nH × 256) = 0 – 65535
-// [Default]	(nL + nH × 256) = 0
-func handleMarginleft(c *Converter, cmd ticketfile.Command) (string, error) {
-	return fmt.Sprintf("\x1DL%c%c", cmd.Opcode[0], cmd.Opcode[1]), nil
-}
-
-// [Name]	Set horizontal and vertical motion units
-// [Format]
-// 	ASCII	   	GS	  	P	  	x	  	y
-// 	Hex		1D		50		x		y
-// 	Decimal		29		80		x		y
-// [Range]
-// 	x = 0 – 255
-// 	y = 0 – 255
-// [Default]	x, y: different depending on the printers
-func handleUnits(c *Converter, cmd ticketfile.Command) (string, error) {
-	return fmt.Sprintf("\x1DP%c%c", cmd.Opcode[0], cmd.Opcode[1]), nil
-}
-
-// [Name]	Select print color
-// [Format]
-// 	ASCII	 	ESC	  	r	  	n
-// 	Hex		1B		72		n
-// 	Decimal		27		114		n
-// [Range]	n = 0, 1, 48, 49
-// [Default]	n = 0
-func handleColor(c *Converter, cmd ticketfile.Command) (string, error) {
-	if cmd.Arg == "RED" {
-		return "\x1Br1", nil
-	}
-	return "\x1Br0", nil
 }
 
 func handleBarcode(c *Converter, cmd ticketfile.Command) (string, error) {

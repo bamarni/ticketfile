@@ -121,10 +121,6 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			break
 		}
 		opcode = []byte{byte(x), byte(y)}
-	case Color:
-		if arg != "BLACK" && arg != "RED" {
-			err = fmt.Errorf("unsupported color %s", arg)
-		}
 	case Charset:
 		if arg == "PC437" {
 			opcode = []byte{escpos.CharsetPC437}

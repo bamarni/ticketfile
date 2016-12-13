@@ -26,7 +26,7 @@ var expectedEscpos = []struct {
 	{ticketfile.Units, "5 10", fmt.Sprintf("\x1DP%c%c", 5, 10)},
 
 	// MARGINLEFT
-	{ticketfile.Marginleft, "500", fmt.Sprintf("\x1DL%c%c", 244, 1)},
+	{ticketfile.Marginleft, "500", string([]byte{29, 76, 244, 1})},
 	{ticketfile.Marginleft, "1024", fmt.Sprintf("\x1DL%c%c", 0, 4)},
 
 	// ALIGN
@@ -40,13 +40,13 @@ var expectedEscpos = []struct {
 	{ticketfile.Cut, "FULL", fmt.Sprintf("\x1DV%c", 0)},
 
 	// FONT
-	{ticketfile.Font, "A", "\x1BM0"},
-	{ticketfile.Font, "B", "\x1BM1"},
-	{ticketfile.Font, "C", "\x1BM2"},
+	{ticketfile.Font, "A", fmt.Sprintf("\x1BM%c", 0)},
+	{ticketfile.Font, "B", fmt.Sprintf("\x1BM%c", 1)},
+	{ticketfile.Font, "C", fmt.Sprintf("\x1BM%c", 2)},
 
 	// COLOR
-	{ticketfile.Color, "BLACK", "\x1Br0"},
-	{ticketfile.Color, "RED", "\x1Br1"},
+	{ticketfile.Color, "BLACK", fmt.Sprintf("\x1Br%c", 0)},
+	{ticketfile.Color, "RED", fmt.Sprintf("\x1Br%c", 1)},
 
 	// BARCODE
 	{ticketfile.Barcode, "PRINT CODE39 AZERTY123", fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},

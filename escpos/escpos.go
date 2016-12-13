@@ -39,8 +39,8 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 		return c.escpos.Init(), nil
 	case ticketfile.Charset:
 		return c.escpos.Charset(cmd.Opcode[0]), nil
-	case ticketfile.MarginLeft:
-		return c.escpos.Marginleft(uint16(cmd.Opcode[0]) + uint16(cmd.Opcode[1])<<8), nil
+	case ticketfile.Marginleft:
+		return c.escpos.MarginLeft(uint16(cmd.Opcode[0]) + uint16(cmd.Opcode[1])<<8), nil
 	case ticketfile.Print, ticketfile.Printraw:
 		return c.escpos.Print(cmd.Arg)
 	case ticketfile.Printlf:
@@ -48,7 +48,7 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 	case ticketfile.Lf:
 		return c.escpos.Lf(cmd.Opcode[0]), nil
 	case ticketfile.Units:
-		return c.escpos.Units(cmd.Opcode[0], cmd.OpCode[1]), nil
+		return c.escpos.Units(cmd.Opcode[0], cmd.Opcode[1]), nil
 	case ticketfile.Font:
 		return c.escpos.Font(cmd.Opcode[0]), nil
 	}

@@ -15,7 +15,5 @@
 @test "[Charset] fail for unencodable unicode" {
   run ticket < $BATS_TEST_DIRNAME/fixtures/charset_unencodable
 
-  [[ "$output" == *"couldn't encode to charset"* ]] || false
-
   [ "$status" -ne 0 ]
 }

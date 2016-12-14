@@ -136,15 +136,15 @@ color_command = "COLOR" ( "BLACK" | "RED" ) .
 
 ### CHARSET
 
-Sets the charset. The default is PC437 (USA: Standard Europe), PC850 is for Western Europe.
+Sets the charset. The default is PC437 (USA: Standard Europe).
 
 ``` ebnf
-charset_command = "CHARSET" ( "PC437" | "PC850" ) .
+charset_command = "CHARSET" ( "PC437" | "PC850" | "PC860" | "PC863" | "PC865" ) .
 ```
 
 ### CUT
 
-Cuts paper, default mode is PARTIAL which lefts one point uncut, some models support a FULL cut.
+Cuts paper, default mode is FULL, PARTIAL would left one point uncut.
 
 ``` ebnf
 cut_command = "CUT" [ "PARTIAL" | "FULL" ] .

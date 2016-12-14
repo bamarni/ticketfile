@@ -49,24 +49,27 @@ var expectedEscpos = []struct {
 	{ticketfile.Color, "RED", fmt.Sprintf("\x1Br%c", 1)},
 
 	// BARCODE
-	{ticketfile.Barcode, "PRINT CODE39 AZERTY123", fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
-	{ticketfile.Barcode, "WIDTH 50", fmt.Sprintf("\x1Dw%c", 50)},
-	{ticketfile.Barcode, "HEIGHT 10", fmt.Sprintf("\x1Dh%c", 10)},
-	{ticketfile.Barcode, "HRI FONT A", fmt.Sprintf("\x1Df%c", 0)},
-	{ticketfile.Barcode, "HRI FONT B", fmt.Sprintf("\x1Df%c", 1)},
-	{ticketfile.Barcode, "HRI DISPLAY TOP", fmt.Sprintf("\x1DH%c", 1)},
+	{ticketfile.Barcode, "CODE39 AZERTY123", fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
+	{ticketfile.BarcodeWidth, "50", fmt.Sprintf("\x1Dw%c", 50)},
+	{ticketfile.BarcodeHeight, "10", fmt.Sprintf("\x1Dh%c", 10)},
+	{ticketfile.BarcodeFont, "A", fmt.Sprintf("\x1Df%c", 0)},
+	{ticketfile.BarcodeFont, "B", fmt.Sprintf("\x1Df%c", 1)},
+	{ticketfile.BarcodeHRI, "TOP", fmt.Sprintf("\x1DH%c", 1)},
 }
 
 func TestConvert(t *testing.T) {
 	conv := NewConverter()
 	for _, exp := range expectedEscpos {
-		cmd, _ := ticketfile.NewCommand(exp.cmdType, exp.cmdArg)
+		cmd, err := ticketfile.NewCommand(exp.cmdType, exp.cmdArg)
+		if err != nil {
+			t.Fatalf("unexpected error : %s", err)
+		}
 		escpos, err := conv.Convert(cmd)
 		if err != nil {
-			t.Error("unexpected error")
+			t.Fatalf("unexpected error : %s", err)
 		}
 		if string(escpos) != exp.escpos {
-			t.Error("unexpected ESC/POS command %s, expected %s", escpos, []byte(exp.escpos))
+			t.Errorf("unexpected ESC/POS command %s %v, expected %v (opcode %v)", exp.cmdArg, escpos, []byte(exp.escpos), cmd.Opcode)
 		}
 	}
 }

@@ -21,6 +21,10 @@ const (
 	Marginleft
 	Units
 	Barcode
+	BarcodeFont
+	BarcodeHRI
+	BarcodeHeight
+	BarcodeWidth
 	Print
 	Printlf
 	multiline
@@ -28,19 +32,23 @@ const (
 )
 
 var commands = map[string]CommandType{
-	"ALIGN":      Align,
-	"CHARSET":    Charset,
-	"COLOR":      Color,
-	"CUT":        Cut,
-	"FONT":       Font,
-	"INIT":       Init,
-	"LF":         Lf,
-	"MARGINLEFT": Marginleft,
-	"PRINT":      Print,
-	"PRINTLF":    Printlf,
-	"PRINTRAW":   Printraw,
-	"UNITS":      Units,
-	"BARCODE":    Barcode,
+	"ALIGN":          Align,
+	"CHARSET":        Charset,
+	"COLOR":          Color,
+	"CUT":            Cut,
+	"FONT":           Font,
+	"INIT":           Init,
+	"LF":             Lf,
+	"MARGINLEFT":     Marginleft,
+	"PRINT":          Print,
+	"PRINTLF":        Printlf,
+	"PRINTRAW":       Printraw,
+	"UNITS":          Units,
+	"BARCODE":        Barcode,
+	"BARCODE_HRI":    BarcodeHRI,
+	"BARCODE_HEIGHT": BarcodeHeight,
+	"BARCODE_WIDTH":  BarcodeWidth,
+	"BARCODE_FONT":   BarcodeFont,
 }
 
 type (
@@ -87,7 +95,7 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 		} else {
 			err = fmt.Errorf("unsupported cut %s", arg)
 		}
-	case Font:
+	case Font, BarcodeFont:
 		if arg == "A" {
 			opcode = []byte{escpos.FontA}
 		} else if arg == "B" {
@@ -135,6 +143,37 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 		} else {
 			err = fmt.Errorf("charset %s not supported", arg)
 		}
+	case Barcode:
+		args := tokenWhitespace.Split(arg, 2)
+		if len(args) != 2 {
+			err = errors.New("expected 2 args")
+			break
+		}
+		if args[0] == "CODE39" {
+			opcode = []byte{escpos.BarcodeCODE39}
+		} else {
+			err = fmt.Errorf("barcode system %s not supported", args[0])
+		}
+		opcode = append(opcode, args[1]...)
+	case BarcodeHRI:
+		if arg == "TOP" {
+			opcode = []byte{escpos.BarcodeHRITop}
+		} else if arg == "BOTTOM" {
+			opcode = []byte{escpos.BarcodeHRIBottom}
+		} else if arg == "BOTH" {
+			opcode = []byte{escpos.BarcodeHRIBoth}
+		} else if arg == "NONE" {
+			opcode = []byte{escpos.BarcodeHRINone}
+		} else {
+			err = fmt.Errorf("barcode hri position %s not supported", arg)
+		}
+	case BarcodeWidth, BarcodeHeight:
+		n, err := strconv.ParseUint(arg, 10, 8)
+		if err != nil {
+			err = errors.New("invalid barcode width / height")
+			break
+		}
+		opcode = []byte{byte(n)}
 	case Lf:
 		if arg != "" {
 			n, err := strconv.ParseUint(arg, 10, 8)

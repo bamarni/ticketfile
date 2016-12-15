@@ -47,6 +47,10 @@ The following command would then convert a Ticketfile into ESC/POS commands and 
 
 *In case of a syntax error in your ticketfile, a message would be displayed to stderr while nothing would be sent to the printer device.*
 
+To convert your Ticketfile into HTML :
+
+    ticket -html < /path/to/ticketfile > receipt.html
+
 ## Contributing
 
 Contributions and new ideas are always welcome.

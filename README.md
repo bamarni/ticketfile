@@ -24,10 +24,10 @@ Even though they're inspired by ESC/POS specification, Ticketfiles are human-rea
 In the future if a new standard emerges we'll do our best to support it without changing the spec in a breaking way. 
 
 If you use a library you'll also be tied to a language, Ticketfiles are **language agnostic**, it's just text. 
-We provide an official Golang library but you're free to write your own, the format is easily parsable.
+They can easily be generated through any language and templating engine.
 
 Finally, even though they mainly target receipt printers, Ticketfiles are **context agnostic**.
-For instance, in the future our Golang library will provide an HTML converter so that a Ticketfile could be displayed in a browser or sent as e-mail attachment.
+For instance, our Golang library also provides an HTML converter so that a Ticketfile can be displayed in a browser or sent as e-mail attachment.
 
 ## Ticketfile specification
 

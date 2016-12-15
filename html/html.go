@@ -14,7 +14,7 @@ type Converter struct {
 
 func NewConverter() *Converter {
 	c := &Converter{
-		enc: strings.NewReplacer(" ", "&nbsp;", "\n", "<br />"),
+		enc: strings.NewReplacer("  ", " &nbsp;", "\n", "<br />"),
 	}
 	c.init()
 	return c

@@ -213,6 +213,7 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			opcode = []byte{escpos.BarcodeCODE39}
 		} else {
 			err = fmt.Errorf("barcode system %s not supported", args[0])
+			break
 		}
 		opcode = append(opcode, args[1]...)
 	case BarcodeHRI:
@@ -239,6 +240,7 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			n, err := strconv.ParseUint(arg, 10, 8)
 			if err != nil {
 				err = errors.New("invalid line feed")
+				break
 			}
 			opcode = []byte{byte(n)}
 		} else {
@@ -255,6 +257,7 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			n, err := strconv.ParseUint(tab, 10, 8)
 			if err != nil {
 				err = errors.New("invalid tab")
+				break
 			}
 			opcode = append(opcode, byte(n))
 		}

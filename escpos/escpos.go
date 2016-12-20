@@ -1,7 +1,7 @@
 package escpos
 
 import (
-	"errors"
+	"bytes"
 
 	"github.com/bamarni/escpos"
 	"github.com/bamarni/ticketfile"
@@ -9,51 +9,64 @@ import (
 
 type Converter struct {
 	escpos *escpos.Escpos
+	buf    *bytes.Buffer
 }
 
 func NewConverter() *Converter {
+	var buf bytes.Buffer
 	return &Converter{
-		escpos: escpos.NewEscpos(),
+		escpos: escpos.NewEscpos(&buf),
+		buf:    &buf,
 	}
 }
 
 func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
+	var err error
 	switch cmd.Type {
 	case ticketfile.Align:
-		return c.escpos.Align(cmd.Opcode[0]), nil
+		err = c.escpos.Align(cmd.Opcode[0])
 	case ticketfile.Color:
-		return c.escpos.Color(cmd.Opcode[0]), nil
+		err = c.escpos.Color(cmd.Opcode[0])
 	case ticketfile.Cut:
 		if cmd.Opcode[0] == 1 {
-			return c.escpos.Cut(true), nil
+			err = c.escpos.Cut(true)
+		} else {
+			err = c.escpos.Cut(false)
 		}
-		return c.escpos.Cut(false), nil
 	case ticketfile.Init:
-		return c.escpos.Init(), nil
+		err = c.escpos.Init()
 	case ticketfile.Charset:
-		return c.escpos.Charset(cmd.Opcode[0]), nil
+		err = c.escpos.Charset(cmd.Opcode[0])
 	case ticketfile.Marginleft:
-		return c.escpos.MarginLeft(uint16(cmd.Opcode[0]) + uint16(cmd.Opcode[1])<<8), nil
+		err = c.escpos.MarginLeft(uint16(cmd.Opcode[0]) + uint16(cmd.Opcode[1])<<8)
 	case ticketfile.Print, ticketfile.Printraw:
-		return c.escpos.Print(cmd.Arg)
+		err = c.escpos.Print(cmd.Arg)
 	case ticketfile.Printlf:
-		return c.escpos.Print(cmd.Arg + "\n")
+		err = c.escpos.Print(cmd.Arg + "\n")
 	case ticketfile.Lf:
-		return c.escpos.Lf(cmd.Opcode[0]), nil
+		err = c.escpos.Lf(cmd.Opcode[0])
 	case ticketfile.Units:
-		return c.escpos.Units(cmd.Opcode[0], cmd.Opcode[1]), nil
+		err = c.escpos.Units(cmd.Opcode[0], cmd.Opcode[1])
 	case ticketfile.Font:
-		return c.escpos.Font(cmd.Opcode[0]), nil
+		err = c.escpos.Font(cmd.Opcode[0])
 	case ticketfile.Barcode:
-		return c.escpos.Barcode(cmd.Opcode[0], string(cmd.Opcode[1:]))
+		err = c.escpos.Barcode(cmd.Opcode[0], string(cmd.Opcode[1:]))
 	case ticketfile.BarcodeWidth:
-		return c.escpos.BarcodeWidth(cmd.Opcode[0]), nil
+		err = c.escpos.BarcodeWidth(cmd.Opcode[0])
 	case ticketfile.BarcodeHeight:
-		return c.escpos.BarcodeHeight(cmd.Opcode[0]), nil
+		err = c.escpos.BarcodeHeight(cmd.Opcode[0])
 	case ticketfile.BarcodeHRI:
-		return c.escpos.BarcodeHRI(cmd.Opcode[0]), nil
+		err = c.escpos.BarcodeHRI(cmd.Opcode[0])
 	case ticketfile.BarcodeFont:
-		return c.escpos.BarcodeFont(cmd.Opcode[0]), nil
+		err = c.escpos.BarcodeFont(cmd.Opcode[0])
+	case ticketfile.Tab:
+		err = c.escpos.Tab()
+	case ticketfile.Tabs:
+		err = c.escpos.TabPositions(cmd.Opcode...)
+	case ticketfile.Printmode:
+		err = c.escpos.PrintMode(cmd.Opcode[0])
 	}
-	return nil, errors.New("unsupported command")
+	b := c.buf.Bytes()
+	c.buf.Reset()
+	return b, err
 }

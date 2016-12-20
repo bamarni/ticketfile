@@ -31,6 +31,9 @@ const (
 	BarcodeWidth
 	Print
 	Printlf
+	Printmode
+	Tab
+	Tabs
 	multiline
 	Printraw
 )
@@ -56,6 +59,7 @@ var (
 		"MARGINLEFT":     Marginleft,
 		"PRINT":          Print,
 		"PRINTLF":        Printlf,
+		"PRINTMODE":      Printmode,
 		"PRINTRAW":       Printraw,
 		"UNITS":          Units,
 		"BARCODE":        Barcode,
@@ -63,6 +67,8 @@ var (
 		"BARCODE_HEIGHT": BarcodeHeight,
 		"BARCODE_WIDTH":  BarcodeWidth,
 		"BARCODE_FONT":   BarcodeFont,
+		"TAB":            Tab,
+		"TABS":           Tabs,
 	}
 	tokenWhitespace   = regexp.MustCompile(`[\t\v\f\r ]+`)
 	tokenMultilineEnd = ">>>"
@@ -238,6 +244,40 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 		} else {
 			opcode = []byte{1}
 		}
+	case Tabs:
+		tabs := strings.Fields(arg)
+		len := len(tabs)
+		if len == 0 || len > 32 {
+			err = errors.New("invalid tabs")
+			break
+		}
+		for _, tab := range tabs {
+			n, err := strconv.ParseUint(tab, 10, 8)
+			if err != nil {
+				err = errors.New("invalid tab")
+			}
+			opcode = append(opcode, byte(n))
+		}
+	case Printmode:
+		modes := strings.Fields(arg)
+		var byteMode byte
+		for _, mode := range modes {
+			if mode == "FONTB" {
+				byteMode = byteMode | escpos.PrintModeFontB
+			} else if mode == "EMPHASIZED" {
+				byteMode = byteMode | escpos.PrintModeEmphasized
+			} else if mode == "DOUBLE_WIDTH" {
+				byteMode = byteMode | escpos.PrintModeDoubleWidth
+			} else if mode == "DOUBLE_HEIGHT" {
+				byteMode = byteMode | escpos.PrintModeDoubleHeight
+			} else if mode == "UNDERLINE" {
+				byteMode = byteMode | escpos.PrintModeUnderline
+			} else {
+				err = errors.New("invalid print mode")
+				break
+			}
+		}
+		opcode = []byte{byteMode}
 	}
 
 	return Command{Type: cmdType, Arg: arg, Opcode: opcode}, err

@@ -49,12 +49,20 @@ var expectedEscpos = []struct {
 	{ticketfile.Color, "RED", fmt.Sprintf("\x1Br%c", 1)},
 
 	// BARCODE
-	{ticketfile.Barcode, "CODE39 AZERTY123", fmt.Sprintf("\x1Dk%cAZERTY123\x00", 4)},
-	{ticketfile.BarcodeWidth, "50", fmt.Sprintf("\x1Dw%c", 50)},
-	{ticketfile.BarcodeHeight, "10", fmt.Sprintf("\x1Dh%c", 10)},
-	{ticketfile.BarcodeFont, "A", fmt.Sprintf("\x1Df%c", 0)},
-	{ticketfile.BarcodeFont, "B", fmt.Sprintf("\x1Df%c", 1)},
-	{ticketfile.BarcodeHRI, "TOP", fmt.Sprintf("\x1DH%c", 1)},
+	{ticketfile.Barcode, "CODE39 AZERTY123", "\x1Dk\x04AZERTY123\x00"},
+	{ticketfile.BarcodeWidth, "50", "\x1Dw\x32"},
+	{ticketfile.BarcodeHeight, "10", "\x1Dh\x0a"},
+	{ticketfile.BarcodeFont, "A", "\x1Df\x00"},
+	{ticketfile.BarcodeFont, "B", "\x1Df\x01"},
+	{ticketfile.BarcodeHRI, "TOP", "\x1DH\x01"},
+
+	// TABS
+	{ticketfile.Tab, "", "\x09"},
+	{ticketfile.Tabs, "5 20", "\x1bD\x05\x14\x00"},
+
+	// PRINTMODE
+	{ticketfile.Printmode, "", "\x1b!\x00"},
+	{ticketfile.Printmode, "FONTB UNDERLINE", "\x1b!\x81"},
 }
 
 func TestConvert(t *testing.T) {

@@ -63,6 +63,9 @@ var expectedEscpos = []struct {
 	// PRINTMODE
 	{ticketfile.Printmode, "", "\x1b!\x00"},
 	{ticketfile.Printmode, "FONTB UNDERLINE", "\x1b!\x81"},
+
+	// WIDTH
+	{ticketfile.Width, "16", "\x1dW\x10\x00"},
 }
 
 func TestConvert(t *testing.T) {

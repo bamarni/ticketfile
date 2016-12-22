@@ -65,6 +65,8 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 		err = c.escpos.TabPositions(cmd.Opcode...)
 	case ticketfile.Printmode:
 		err = c.escpos.PrintMode(cmd.Opcode[0])
+	case ticketfile.Width:
+		err = c.escpos.Width(uint16(cmd.Opcode[0]) + uint16(cmd.Opcode[1])<<8)
 	}
 	b := c.buf.Bytes()
 	c.buf.Reset()

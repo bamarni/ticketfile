@@ -34,6 +34,7 @@ const (
 	Printmode
 	Tab
 	Tabs
+	Width
 	multiline
 	Printraw
 )
@@ -69,6 +70,7 @@ var (
 		"BARCODE_FONT":   BarcodeFont,
 		"TAB":            Tab,
 		"TABS":           Tabs,
+		"WIDTH":          Width,
 	}
 	tokenWhitespace   = regexp.MustCompile(`[\t\v\f\r ]+`)
 	tokenMultilineEnd = ">>>"
@@ -165,10 +167,10 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 		} else {
 			err = fmt.Errorf("unsupported font %s", arg)
 		}
-	case Marginleft:
+	case Marginleft, Width:
 		margin, err := strconv.ParseUint(arg, 10, 16)
 		if err != nil {
-			err = errors.New("invalid left margin")
+			err = errors.New("invalid value")
 		} else {
 			opcode = []byte{byte(margin & 0xff), byte(margin >> 8)}
 		}

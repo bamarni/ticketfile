@@ -196,6 +196,8 @@ func NewCommand(cmdType CommandType, arg string) (Command, error) {
 			opcode = []byte{escpos.CharsetPC437}
 		} else if arg == "PC850" {
 			opcode = []byte{escpos.CharsetPC850}
+		} else if arg == "PC858" {
+			opcode = []byte{escpos.CharsetPC858}
 		} else if arg == "PC860" {
 			opcode = []byte{escpos.CharsetPC860}
 		} else if arg == "PC863" {

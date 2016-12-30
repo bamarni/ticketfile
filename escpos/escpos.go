@@ -29,9 +29,9 @@ func (c *Converter) Convert(cmd ticketfile.Command) ([]byte, error) {
 		err = c.escpos.Color(cmd.Opcode[0])
 	case ticketfile.Cut:
 		if cmd.Opcode[0] == 1 {
-			err = c.escpos.Cut(true)
+			err = c.escpos.CutB(true, 3)
 		} else {
-			err = c.escpos.Cut(false)
+			err = c.escpos.CutB(false, 3)
 		}
 	case ticketfile.Init:
 		err = c.escpos.Init()

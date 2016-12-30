@@ -35,9 +35,9 @@ var expectedEscpos = []struct {
 	{ticketfile.Align, "RIGHT", fmt.Sprintf("\x1Ba%c", 2)},
 
 	// CUT
-	{ticketfile.Cut, "", fmt.Sprintf("\x1DV%c", 0)},
-	{ticketfile.Cut, "PARTIAL", fmt.Sprintf("\x1DV%c", 1)},
-	{ticketfile.Cut, "FULL", fmt.Sprintf("\x1DV%c", 0)},
+	{ticketfile.Cut, "", fmt.Sprintf("\x1DV%c\x03", 65)},
+	{ticketfile.Cut, "PARTIAL", fmt.Sprintf("\x1DV%c\x03", 66)},
+	{ticketfile.Cut, "FULL", fmt.Sprintf("\x1DV%c\x03", 65)},
 
 	// FONT
 	{ticketfile.Font, "A", fmt.Sprintf("\x1BM%c", 0)},
